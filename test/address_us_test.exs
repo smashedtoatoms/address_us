@@ -288,7 +288,7 @@ defmodule AddressUSTest do
   end
 
   ############################################################################
-  ## Randon addresses that have broken this library at some point.
+  ## Random addresses that have broken this library at some point.
   ############################################################################
 
   test "Parse address: A. P. Croll & Son 2299 Lewes-Georgetown Hwy, Georgetown 
