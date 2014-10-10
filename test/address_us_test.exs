@@ -542,7 +542,7 @@ defmodule AddressUSTest do
     postal: "85018", street: %Street{name: "Thomas", suffix: "Rd", 
     primary_number: "4423", pre_direction: "E", secondary_designator: "Ste",
     secondary_value: "B"}}
-    result = parse_address("4423 E Thomas Rd Ste B Phoenix, AZ 85018")
+    result = parse_address("4423 E Thomas Rd (SEC) Ste B Phoenix, AZ 85018")
     assert desired_result == result
   end
 end
