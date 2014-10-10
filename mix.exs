@@ -4,7 +4,7 @@ defmodule AddressUS.Mixfile do
   def project do
     [app: :address_us,
      version: "0.0.1",
-     elixir: "~> 0.15.0",
+     elixir: "~> 1.0.0",
      deps: deps]
   end
 

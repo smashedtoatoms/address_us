@@ -5,7 +5,7 @@ end
 
 defmodule Street do
   defstruct name: nil, pmb: nil, pre_direction: nil, primary_number: nil, 
-    post_direction: nil, secondary_designator: nil, secondary_number: nil,
+    post_direction: nil, secondary_designator: nil, secondary_value: nil,
     suffix: nil
 end
 
@@ -26,7 +26,7 @@ defmodule AddressUS.Parser do
       %Address{city: "Denver", plus_4: nil, postal: "80219", 
       state: "CO", street: %Street{name: "B", pmb: nil, 
       post_direction: nil, pre_direction: "S", primary_number: "2345", 
-      secondary_designator: nil, secondary_number: nil, suffix: "St"}}
+      secondary_designator: nil, secondary_value: nil, suffix: "St"}}
   """
   def parse_address(messy_address) when not is_binary(messy_address), do: nil
   def parse_address(messy_address) do
@@ -46,7 +46,7 @@ defmodule AddressUS.Parser do
   ## Examples
       iex> AddressUS.Parser.parse_address_line("2345 S. Meade St")
       %Street{name: "Meade", pmb: nil, post_direction: nil, pre_direction: "S", 
-      primary_number: "2345", secondary_designator: nil, secondary_number: nil, 
+      primary_number: "2345", secondary_designator: nil, secondary_value: nil, 
       suffix: "St"}
   """
   def parse_address_line(invalid) when not is_binary(invalid), do: nil
@@ -189,6 +189,9 @@ defmodule AddressUS.Parser do
       head |> String.starts_with?("#") -> 
         get_city(address, backup, city, true)
       Enum.count(clean_hyphenated_street(head)) > 1 ->
+        get_city(address, backup, city, true)
+      city != nil && !is_keyword?(head) && address != [] 
+          && is_possible_suite_number?(head) ->
         get_city(address, backup, city, true)
       city != nil && !is_keyword?(head) && address != [] ->
         get_city(tail, backup, merge_names(city, head), false)
@@ -333,7 +336,7 @@ defmodule AddressUS.Parser do
   end
 
   # Parses out the secondary data from an address field and returns
-  # {secondary_designator, secondary_number, private_mailbox_number, 
+  # {secondary_designator, secondary_value, private_mailbox_number, 
   # leftover_address_list}
   defp get_secondary(address) when not is_list(address), do: {nil, nil, nil, []}
   defp get_secondary([]), do: {nil, nil, nil, []}
@@ -343,21 +346,21 @@ defmodule AddressUS.Parser do
   defp get_secondary([], backup, _pmb, _designator, _number, false) do
     {nil, nil, nil, backup}
   end
-  defp get_secondary(address, _backup, pmb, designator, number, true) do
+  defp get_secondary(address, _backup, pmb, designator, value, true) do
     [_|tail] = address
     cond do
-      number == nil && pmb != nil -> 
+      value == nil && pmb != nil -> 
         clean_designator = safe_replace(designator, ",", "")
         clean_pmb = safe_replace(pmb, ",", "")
         {clean_designator, nil, clean_pmb, tail}
       true -> 
         clean_designator = safe_replace(designator, ",", "")
-        clean_number = safe_replace(number, ",", "")
+        clean_number = safe_replace(value, ",", "")
         clean_pmb = safe_replace(pmb, ",", "")
         {clean_designator, clean_number, clean_pmb, address}
     end
   end
-  defp get_secondary(address, backup, pmb, designator, number, false) do
+  defp get_secondary(address, backup, pmb, designator, value, false) do
     [head|tail] = address
     tail_head = if length(tail) > 0, do: hd(tail), else: nil
     units = Application.get_env(:parsing, :secondary_units)
@@ -365,22 +368,27 @@ defmodule AddressUS.Parser do
       string_is_number?(head) ->
         cond do
           contains_po_box?(tail) || is_state?(tail_head)-> 
-            get_secondary(tail, backup, pmb, designator, number, false)
+            get_secondary(tail, backup, pmb, designator, value, false)
           true -> 
             get_secondary(tail, backup, pmb, designator, head, false)
         end
       Map.has_key?(units, title_case(head)) ->
         get_secondary(tail, backup, pmb, Map.get(units, title_case(head)), 
-          number, true)
+          value, true)
       Map.values(units) |> Enum.member?(title_case(head)) ->
-        get_secondary(tail, backup, pmb, title_case(head), number, true)
+        get_secondary(tail, backup, pmb, title_case(head), value, true)
       String.starts_with?(head, "#") && !contains_po_box?(address) ->
         get_secondary(tail, backup, safe_replace(head, "#", ""), designator, 
-          number, false)
-      number != nil && designator == nil ->
+          value, false)
+      value != nil && designator == nil ->
         get_secondary(backup, backup, pmb, designator, nil, true)
+      is_possible_suite_number?(head) && (
+          Map.has_key?(units, title_case(tail_head)) ||
+          Map.values(units) |> Enum.member?(title_case(tail_head))) ->
+        get_secondary(tail, backup, pmb, designator, 
+          safe_replace(head, ",", ""), false)
       true ->
-        get_secondary(backup, backup, pmb, designator, number, true)
+        get_secondary(backup, backup, pmb, designator, value, true)
     end
   end
 
@@ -470,7 +478,7 @@ defmodule AddressUS.Parser do
   defp parse_address_list([""]), do: nil
   defp parse_address_list(address) do
     cleaned_address = Enum.map(address, &(safe_replace(&1, ",", "")))
-    {secondary_designator, secondary_number, pmb, address_no_secondary} = 
+    {secondary_designator, secondary_value, pmb, address_no_secondary} = 
       get_secondary(cleaned_address)
     {post_direction, address_no_secondary_direction} = 
       get_post_direction(address_no_secondary)
@@ -490,7 +498,7 @@ defmodule AddressUS.Parser do
 
     %Street{secondary_designator: secondary_designator, 
     post_direction: post_direction, pre_direction: pre_direction,
-    secondary_number: secondary_number,  pmb: pmb, suffix: suffix, 
+    secondary_value: secondary_value,  pmb: pmb, suffix: suffix, 
     primary_number: primary_number, name: name}
   end
 
@@ -608,6 +616,7 @@ defmodule AddressUS.Parser do
   defp standardize_address(address) when not is_binary(address), do: nil
   defp standardize_address(address) do
     address
+      |> safe_replace(~r/\(.+\)/, "")
       |> safe_replace(~r/(?i)\sAND\s/, "&")
       |> safe_replace(~r/(?i)\sI.E.\s/, "")
       |> safe_replace(~r/(?i)\sET\sAL\s/, "")
@@ -680,6 +689,13 @@ defmodule AddressUS.Parser do
       Map.values(states) |> Enum.member?(String.upcase(state)) -> true
       true -> false
     end
+  end
+
+  # Determines if a value is a possible Suite value.
+  defp is_possible_suite_number?(value) when is_number(value), do: true
+  defp is_possible_suite_number?(value) do
+    values = String.codepoints("abcdefghijklmnopqrstuvqxyz12334567890")
+    String.downcase(value) in values
   end
 
   # Determines if string can be cleanly converted into a number.
