@@ -1,9 +1,22 @@
 defmodule Address do
-  defstruct city: nil, plus_4: nil, street: nil, state: nil, 
-    postal: nil
+  @moduledoc """
+  Container for the struct that contains the Address information.
+  """
+
+  @doc """
+  Struct containing Address information.
+  """
+  defstruct city: nil, plus_4: nil, street: nil, state: nil, postal: nil
 end
 
 defmodule Street do
+  @moduledoc """
+  Container for the struct that contains the Street information for an address.
+  """
+
+  @doc """
+  Struct containing the Street information.
+  """
   defstruct name: nil, pmb: nil, pre_direction: nil, primary_number: nil, 
     post_direction: nil, secondary_designator: nil, secondary_value: nil,
     suffix: nil
