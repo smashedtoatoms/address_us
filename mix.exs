@@ -3,11 +3,13 @@ defmodule AddressUS.Mixfile do
 
   def project do
     [app: :address_us,
-     version: "0.0.1",
+     version: "0.1.0",
      elixir: "~> 1.0.0",
      name: "AddressUS",
      source_url: "https://github.com/smashedtoatoms/address_us",
      homepage_url: "https://github.com/smashedtoatoms/address_us",
+     description: description,
+     package: package,
      deps: deps]
   end
 
@@ -31,6 +33,24 @@ defmodule AddressUS.Mixfile do
     [
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.6", only: :dev}
+    ]
+  end
+
+  defp description do
+    """
+    Library for parsing US Addresses into their individual parts.
+    """
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      contributors: ["Jason Legler"],
+      licenses: ["Apache 2.0"],
+      links: %{
+        "GitHub" => "https://github.com/smashedtoatoms/address_us",
+        "Docs" => "https://smashedtoatoms.github.io/address_us"
+      }
     ]
   end
 end
