@@ -209,6 +209,13 @@ defmodule AddressUS.Parser do
       city != nil && !is_keyword?(head) && address != [] ->
         get_city(tail, backup, merge_names(city, head), false)
       city != nil && is_keyword?(head) ->
+        pre_keyword_white_list = ["SALT", "WEST", "PALM"]
+        cond do
+          Enum.member?(pre_keyword_white_list, String.upcase(tail_head)) ->
+            get_city(tail, backup, merge_names(city, head), false)
+          true ->
+            get_city(address, backup, city, true)
+        end
         get_city(address, backup, city, true)
       is_keyword?(head) ->
         get_city(address, backup, city, true)
@@ -437,15 +444,19 @@ defmodule AddressUS.Parser do
   defp get_street(address) when not is_list(address), do: nil
   defp get_street([]), do: nil
   defp get_street(address), do: get_street(address, nil, false)
-  defp get_street([], street, _) do 
-    directions = Application.get_env(:parsing, :reversed_directions)
-    has_key = Map.has_key?(directions, street)
-    if has_key, do: Map.get(directions, street), else: street
-  end
+  defp get_street([], street, false), do: get_street([], street, true)
   defp get_street(_address, street, true) do
-    directions = Application.get_env(:parsing, :reversed_directions)
-    has_key = Map.has_key?(directions, street)
-    if has_key, do: Map.get(directions, street), else: street
+    corner_case_street_names = %{"PGA": "PGA", "ROUTE": "Route", "RT": "Route" }
+    filtered_street = String.upcase(street) |> safe_replace(~r/\s(\d+)/, "")
+    cond do
+      Map.has_key?(corner_case_street_names, filtered_street) ->
+        street_name = Map.get(corner_case_street_names, filtered_street) 
+          |> safe_replace(~r/\s(\d+)/, "")
+        street_number = " " <> safe_replace(street, ~r/[a-zA-Z\s]+/, "")
+        street_name <> street_number |> safe_replace(~r/\s$/, "")
+      true ->
+        street
+    end
   end
   defp get_street(address, street, false) do
     [head|tail] = address
@@ -458,10 +469,25 @@ defmodule AddressUS.Parser do
         street_name = if has_key, do: Map.get(directions, street), else: street
         get_street(address, street_name, true)
       length(clean_hyphenated_street(head)) > 1 ->
-        get_street(clean_hyphenated_street(head) ++ tail, street, false)
+        cond do
+          is_keyword?(street) ->
+            get_street(tail, street <> " " <> head, false)
+          true ->
+            get_street(clean_hyphenated_street(head) ++ tail, street, false)
+        end
       true ->
-        new_address = if street == nil, do: head, else: street <> " " <> head
-        get_street(tail, new_address, false)
+        directions = Application.get_env(:parsing, :reversed_directions)
+        new_address = cond do
+          street == nil -> title_case(head)
+          true -> street <> " " <> title_case(head)
+        end
+        is_direction = Map.has_key?(directions, new_address)
+        cond do
+          is_direction -> 
+            get_street(tail, Map.get(directions, new_address), false)
+          true ->
+            get_street(tail, new_address, false)
+        end
     end
   end
 
@@ -629,23 +655,36 @@ defmodule AddressUS.Parser do
   defp standardize_address(address) when not is_binary(address), do: nil
   defp standardize_address(address) do
     address
-      |> safe_replace(~r/\(.+\)/, "")
+      |> safe_replace(~r/ United States$/, "")
+      |> safe_replace(~r/ UNITED STATES$/, "")
+      |> safe_replace(~r/ US$/, "")
+      |> safe_replace(~r/US$/, "")
+      |> safe_replace(~r/\(SEC\)/, "")
+      |> safe_replace(~r/U.S./, "US")
+      |> safe_replace(~r/\sM L King\s/, " Martin Luther King ")
+      |> safe_replace(~r/\sMLK\s/, " Martin Luther King ")
+      |> safe_replace(~r/\sMLKING\s/, " Martin Luther King ")
+      |> safe_replace(~r/\sML KING\s/, " Martin Luther King ")
+      |> safe_replace(~r/(.+)\(/, "\\1 (")
+      |> safe_replace(~r/\)(.+)/, ") \\1")
+      |> safe_replace(~r/\((.+)\)/, "\\1")
       |> safe_replace(~r/(?i)\sAND\s/, "&")
       |> safe_replace(~r/(?i)\sI.E.\s/, "")
       |> safe_replace(~r/(?i)\sET\sAL\s/, "")
       |> safe_replace(~r/(?i)\sIN\sCARE\sOF\s/, "")
       |> safe_replace(~r/(?i)\sCARE\sOF\s/, "")
-      |> safe_replace(~r/(?i)\sTHE\s/, "")
       |> safe_replace(~r/(?i)\sBY\s/, "")
       |> safe_replace(~r/(?i)\sFOR\s/, "")
-      |> safe_replace(~r/(?i)\sAT\s/, "")
       |> safe_replace(~r/(?i)\sALSO\s/, "")
       |> safe_replace(~r/(?i)\sATTENTION\s/, "")
       |> safe_replace(~r/(?i)\sATTN\s/, "")
       |> safe_replace(~r/(?i)\ss#\ss(\S)/, " #\\1")
       |> safe_replace(~r/(?i)P O BOX/, "PO BOX")
       |> safe_replace(~r/(?i)US (\d+)/, "US Hwy \\1")
+      |> safe_replace(~r/(?i)(\d+) Hwy (\d+)/, "\\1 Highway \\2")
+      |> safe_replace(~r/(.+)#/, "\\1 #")
       |> safe_replace(~r/\n/, ", ")
+      |> safe_replace(~r/\t/, " ")
       |> safe_replace(~r/\s+/, " ")
       |> safe_replace(~r/,(\S)/, ", \\1")
       |> safe_replace(~r/\s,(\S)/, ", \\1")
@@ -660,10 +699,25 @@ defmodule AddressUS.Parser do
 
   # Capitalizes the first letter of every word in a string and returns the 
   # title cased string.
-  defp title_case(value) when not is_binary(value), do: nil
-  defp title_case(value) do
-    String.split(value, " ") 
-      |> Enum.map(&(String.capitalize(&1))) 
+  def title_case(value) when not is_binary(value), do: nil
+  def title_case(value) do
+    word_endings = ["ST", "ND", "RD", "TH"]
+    make_title_case = fn(word) ->
+      letters = safe_replace(word, ~r/\d+/, "")
+      cond do
+        String.downcase(word) == "us" -> 
+          "US"
+        Regex.match?(~r/^(\d)/, word) && Enum.member?(word_endings, letters) ->
+          String.upcase(word)
+        true ->
+          String.split(word, "-") 
+            |> Enum.map(&(String.capitalize(&1)))
+            |> Enum.join("-")
+      end
+    end
+
+    String.split(value, " ")
+      |> Enum.map(&(make_title_case.(&1)))
       |> Enum.join(" ")
   end
 

@@ -37,7 +37,7 @@ defmodule AddressUSTest do
   end
 
   test "Parse postal code and return a blank field" do
-    desired_result = %Address{street: %Street{name: "bob"}}
+    desired_result = %Address{street: %Street{name: "Bob"}}
     result = parse_address("bob")
     assert desired_result == result
   end
@@ -504,7 +504,7 @@ defmodule AddressUSTest do
 
   test "Parse address: 2230 Farm to Market 407, Highland Village, TX 75077" do
     desired_result = %Address{city: "Highland Village", state: "TX", 
-    postal: "75077", street: %Street{name: "Farm to Market 407", 
+    postal: "75077", street: %Street{name: "Farm To Market 407", 
     primary_number: "2230"}}
     result = parse_address("2230 Farm to Market 407, Highland Village, TX
       75077")
@@ -543,6 +543,23 @@ defmodule AddressUSTest do
     primary_number: "4423", pre_direction: "E", secondary_designator: "Ste",
     secondary_value: "B"}}
     result = parse_address("4423 E Thomas Rd (SEC) Ste B Phoenix, AZ 85018")
+    assert desired_result == result
+  end
+
+  test "Parse address: 4423 E Thomas Rd (Ste B) Phoenix, AZ 85018" do
+    desired_result = %Address{city: "Phoenix", state: "AZ", 
+    postal: "85018", street: %Street{name: "Thomas", suffix: "Rd", 
+    primary_number: "4423", pre_direction: "E", secondary_designator: "Ste",
+    secondary_value: "B"}}
+    result = parse_address("4423 E Thomas Rd (Ste B) Phoenix, AZ 85018")
+    assert desired_result == result
+  end
+
+  test "Parse address: 11681 US HWY 70, Clayton, NC 27520" do
+    desired_result = %Address{city: "Clayton", state: "NC", 
+    postal: "27520", street: %Street{name: "US Hwy 70", 
+    primary_number: "11681"}}
+    result = parse_address("11681 US HWY 70, Clayton, NC 27520")
     assert desired_result == result
   end
 end
