@@ -127,10 +127,10 @@ defmodule AddressUS.Parser do
     state = title_case(raw_state)
     states = Application.get_env(:parsing, :states)
     cond do
-      Map.has_key?(states, state) == true -> 
+      safe_has_key?(states, state) == true -> 
         Map.get(states, state)
-      Enum.member?(Map.values(states), String.upcase(state)) == true -> 
-        String.upcase(state)
+      Enum.member?(Map.values(states), safe_upcase(state)) == true -> 
+        safe_upcase(state)
       true -> 
         state
     end
@@ -149,7 +149,7 @@ defmodule AddressUS.Parser do
   def get_country_code(nil), do: "US"
   def get_country_code(country_name) do
     codes = Application.get_env(:parsing, :countries)
-    country = String.upcase(country_name)
+    country = safe_upcase(country_name)
     case Enum.member?(Map.values(codes), country) do
       true -> country
       false -> Map.get(codes, country, country_name)
@@ -199,19 +199,19 @@ defmodule AddressUS.Parser do
         get_city(tail, backup, merge_names(city, head), false)
       String.ends_with?(tail_head, ",") ->
         get_city(tail, backup, merge_names(city, head), true)
-      head |> String.starts_with?("#") -> 
+      head |> safe_starts_with?("#") -> 
         get_city(address, backup, city, true)
       Enum.count(clean_hyphenated_street(head)) > 1 ->
         get_city(address, backup, city, true)
       city != nil && !is_keyword?(head) && address != [] 
-          && is_possible_suite_number?(head) ->
+          && is_possible_suite_number?(tail_head) ->
         get_city(address, backup, city, true)
       city != nil && !is_keyword?(head) && address != [] ->
         get_city(tail, backup, merge_names(city, head), false)
       city != nil && is_keyword?(head) ->
         pre_keyword_white_list = ["SALT", "WEST", "PALM"]
         cond do
-          Enum.member?(pre_keyword_white_list, String.upcase(tail_head)) ->
+          Enum.member?(pre_keyword_white_list, safe_upcase(tail_head)) ->
             get_city(tail, backup, merge_names(city, head), false)
           true ->
             get_city(address, backup, city, true)
@@ -254,7 +254,7 @@ defmodule AddressUS.Parser do
           |> String.split(~r/(?i)BOX\s/)
           |> tl
           |> hd
-        get_number([], backup, String.replace(number, "#", ""), "PO BOX", true)
+        get_number([], backup, safe_replace(number, "#", ""), "PO BOX", true)
       number == nil && string_is_number_or_fraction?(head) && next_is_number ->
         get_number(tl(tail), backup, head <> " " <> hd(tail), box, true)
       Enum.member?(address, "&") ->
@@ -375,38 +375,105 @@ defmodule AddressUS.Parser do
         {clean_designator, nil, clean_pmb, tail}
       true -> 
         clean_designator = safe_replace(designator, ",", "")
-        clean_number = safe_replace(value, ",", "")
+        clean_value = safe_replace(value, ",", "")
         clean_pmb = safe_replace(pmb, ",", "")
-        {clean_designator, clean_number, clean_pmb, address}
+        {clean_designator, clean_value, clean_pmb, address}
     end
   end
   defp get_secondary(address, backup, pmb, designator, value, false) do
     [head|tail] = address
-    tail_head = if length(tail) > 0, do: hd(tail), else: nil
+    {tail_head, tail_tail} = case length(tail) do
+      0 -> {"", []}
+      1 -> {hd(tail), []}
+      _ -> {hd(tail), tl(tail)}
+    end
+
     units = Application.get_env(:parsing, :secondary_units)
+    suffixes = Application.get_env(:parsing, :street_suffixes)
+    directions = Application.get_env(:parsing, :directions)
+
     cond do
       string_is_number?(head) ->
         cond do
           contains_po_box?(tail) || is_state?(tail_head)-> 
             get_secondary(tail, backup, pmb, designator, value, false)
+          tail_head == '&' ->
+            get_secondary(tail_tail, backup, pmb, designator, 
+              tail_head <> " " <> head, false)
+          safe_starts_with?(value, "&") ->
+            get_secondary(tail, backup, pmb, designator, head, false)
+          tail_head == "#" ->
+            get_secondary(tail_tail, backup, pmb, designator, head, false)
           true -> 
             get_secondary(tail, backup, pmb, designator, head, false)
         end
-      Map.has_key?(units, title_case(head)) ->
-        get_secondary(tail, backup, pmb, Map.get(units, title_case(head)), 
-          value, true)
+      safe_has_key?(units, title_case(head)) ->
+        cond do
+          safe_has_key?(suffixes, safe_upcase(value)) ->
+            get_secondary(backup, backup, nil, nil, nil, true)
+          true ->
+            get_secondary(tail, backup, pmb, Map.get(units, head), value, true)
+        end
       Map.values(units) |> Enum.member?(title_case(head)) ->
         get_secondary(tail, backup, pmb, title_case(head), value, true)
-      String.starts_with?(head, "#") && !contains_po_box?(address) ->
-        get_secondary(tail, backup, safe_replace(head, "#", ""), designator, 
-          value, false)
+      safe_starts_with?(head, "#") && !contains_po_box?(address) ->
+        all_unit_values = Map.keys(units) ++ Map.values(units)
+        cond do
+          Enum.member?(all_unit_values, title_case(tail_head)) ->
+            secondary_unit = cond do
+              Map.values(units) |> Enum.member?(title_case(tail_head)) -> 
+                title_case(tail_head)
+              true ->
+                Map.get(units, title_case(tail_head))
+            end
+            get_secondary(tail_tail, backup, pmb, secondary_unit, 
+              safe_replace(head, "#", ""), true)
+          true ->
+            get_secondary(tail, backup, safe_replace(head, "#", ""), 
+              designator, value, false)
+        end
       value != nil && designator == nil ->
-        get_secondary(backup, backup, pmb, designator, nil, true)
-      is_possible_suite_number?(head) && (
-          Map.has_key?(units, title_case(tail_head)) ||
+        all_unit_values = Map.keys(units) ++ Map.values(units)
+        cond do
+          Enum.member?(all_unit_values, title_case(tail_head)) ->
+            secondary_unit = cond do
+              Map.values(units) |> Enum.member?(title_case(tail_head)) ->
+                title_case(tail_head)
+              true ->
+                Map.get(units, title_case(tail_head))
+            end
+            get_secondary(tail_tail, backup, pmb, secondary_unit, 
+              head <> value, true)
+          Enum.member?(all_unit_values, title_case(head)) ->
+            secondary_unit = cond do
+              Map.values(units) |> Enum.member?(title_case(head)) ->
+                title_case(head)
+              true ->
+                Map.get(units, title_case(head))
+            end
+            get_secondary(tail, backup, pmb, secondary_unit, value, true)
+          true ->
+            get_secondary(backup, backup, pmb, designator, nil, true)
+        end
+      is_possible_suite_number?(tail_head) && (
+          safe_has_key?(units, title_case(tail_head)) ||
           Map.values(units) |> Enum.member?(title_case(tail_head))) ->
         get_secondary(tail, backup, pmb, designator, 
           safe_replace(head, ",", ""), false)
+      get_suffix_value(tail_head) != nil && get_suffix_value(head) == nil ->
+        cond do
+          is_possible_suite_number?(head) && (
+            String.length(tail_tail) < 2 || 
+            String.upcase(hd(tail_tail)) == "STATE") ->
+            get_secondary(backup, backup, pmb, designator, value, true)
+          Map.values(directions) |> Enum.member?(safe_upcase(head)) ||
+            safe_has_key?(directions, title_case(head)) ->
+              get_secondary(backup, backup, pmb, designator, value, true)
+          true ->
+            get_secondary(tail, backup, pmb, designator, value, true)
+        end
+      tail_head == "&" ->
+        get_secondary(tail_tail, backup, pmb, designator, value, false)
       true ->
         get_secondary(backup, backup, pmb, designator, value, true)
     end
@@ -428,10 +495,10 @@ defmodule AddressUS.Parser do
     cond do
       count == 5 && Enum.member?(Map.values(states), head) ->
         get_state(tail, address_backup, head, 0)
-      Map.has_key?(states, state_to_evaluate) ->
+      safe_has_key?(states, state_to_evaluate) ->
         get_state(tail, address_backup, Map.get(states, state_to_evaluate), 0)
-      Enum.member?(Map.values(states), String.upcase(state_to_evaluate)) ->
-        get_state(tail, address_backup, String.upcase(state_to_evaluate), 0)
+      Enum.member?(Map.values(states), safe_upcase(state_to_evaluate)) ->
+        get_state(tail, address_backup, safe_upcase(state_to_evaluate), 0)
       count == 1 ->
         get_state(address_backup, address_backup, nil, 0)
       true -> 
@@ -447,13 +514,22 @@ defmodule AddressUS.Parser do
   defp get_street([], street, false), do: get_street([], street, true)
   defp get_street(_address, street, true) do
     corner_case_street_names = %{"PGA": "PGA", "ROUTE": "Route", "RT": "Route" }
-    filtered_street = String.upcase(street) |> safe_replace(~r/\s(\d+)/, "")
+    filtered_street = safe_upcase(street) |> safe_replace(~r/\s(\d+)/, "")
+    directions = Application.get_env(:parsing, :directions)
+    rev_directions = Application.get_env(:parsing, :reversed_directions)
     cond do
-      Map.has_key?(corner_case_street_names, filtered_street) ->
+      safe_has_key?(corner_case_street_names, filtered_street) ->
         street_name = Map.get(corner_case_street_names, filtered_street) 
           |> safe_replace(~r/\s(\d+)/, "")
         street_number = " " <> safe_replace(street, ~r/[a-zA-Z\s]+/, "")
         street_name <> street_number |> safe_replace(~r/\s$/, "")
+      Enum.member?(Map.keys(directions) ++ Map.values(directions),
+        title_case(street)) ->
+        cond do
+          Map.has_key?(directions, title_case(street)) -> title_case(street)
+          true -> 
+            Map.get(rev_directions, String.upcase(street))
+        end
       true ->
         street
     end
@@ -464,9 +540,22 @@ defmodule AddressUS.Parser do
       head == "&" || head == "AND" ->
         get_street(tail, nil, false)
       length(address) == 0 ->
-        directions = Application.get_env(:parsing, :reversed_directions)
-        has_key = Map.has_key?(directions, street)
-        street_name = if has_key, do: Map.get(directions, street), else: street
+        directions = Application.get_env(:parsing, :directions)
+        rev_directions = Application.get_env(:parsing, :reversed_directions)
+        keys = Map.keys(directions)
+        values = Map.values(directions)
+        street_is_direction = keys ++ values |> Enum.member?(head)
+        street_name = cond do
+          street_is_direction ->
+            cond do
+              Map.has_key?(directions, title_case(head)) ->
+                Map.get(rev_directions, Map.get(directions, title_case(head)))
+              true ->
+                Map.get(rev_directions, String.upcase(head))
+            end
+          true ->
+            street
+        end
         get_street(address, street_name, true)
       length(clean_hyphenated_street(head)) > 1 ->
         cond do
@@ -476,18 +565,11 @@ defmodule AddressUS.Parser do
             get_street(clean_hyphenated_street(head) ++ tail, street, false)
         end
       true ->
-        directions = Application.get_env(:parsing, :reversed_directions)
         new_address = cond do
           street == nil -> title_case(head)
           true -> street <> " " <> title_case(head)
         end
-        is_direction = Map.has_key?(directions, new_address)
-        cond do
-          is_direction -> 
-            get_street(tail, Map.get(directions, new_address), false)
-          true ->
-            get_street(tail, new_address, false)
-        end
+        get_street(tail, new_address, false)
     end
   end
 
@@ -571,10 +653,10 @@ defmodule AddressUS.Parser do
         suffix_data = Application.get_env(:parsing, :street_suffixes)
         suffixes = Map.keys(suffix_data) ++ Map.values(suffix_data)
         values = value |> String.split("-")
-        truths = Enum.map(values, &(Enum.member?(suffixes, String.upcase(&1))))
+        truths = Enum.map(values, &(Enum.member?(suffixes, safe_upcase(&1))))
         new_values = Enum.map(values, fn(v) -> 
-          case Map.has_key?(suffix_data, String.upcase(v)) do
-            true -> title_case(Map.get(suffix_data, String.upcase(v)))
+          case safe_has_key?(suffix_data, safe_upcase(v)) do
+            true -> title_case(Map.get(suffix_data, safe_upcase(v)))
             false -> title_case(v)
           end
         end)
@@ -593,8 +675,8 @@ defmodule AddressUS.Parser do
     val = title_case(value)
     directions = Application.get_env(:parsing, :directions)
     cond do
-      Map.has_key?(directions, val) -> Map.get(directions, val)
-      Map.values(directions) |> Enum.member?(val) -> String.upcase(val)
+      safe_has_key?(directions, val) -> Map.get(directions, val)
+      Map.values(directions) |> Enum.member?(val) -> safe_upcase(val)
       true -> nil
     end
   end
@@ -605,10 +687,10 @@ defmodule AddressUS.Parser do
     directions = Application.get_env(:parsing, :directions)
     clean_value = title_case(value)
     cond do
-      Map.has_key?(directions, clean_value) ->
+      safe_has_key?(directions, clean_value) ->
         Map.get(directions, clean_value)
-      Map.values(directions) |> Enum.member?(String.upcase(clean_value)) ->
-        String.upcase(clean_value)
+      Map.values(directions) |> Enum.member?(safe_upcase(clean_value)) ->
+        safe_upcase(clean_value)
       true -> ""
     end
   end
@@ -623,8 +705,8 @@ defmodule AddressUS.Parser do
     suffix_values = capitalized_keys ++ capitalized_values
     cond do
       Enum.member?(suffix_values, cleaned_value) -> 
-        case Map.has_key?(suffixes, String.upcase(value)) do
-          true -> Map.get(suffixes, String.upcase(value))
+        case safe_has_key?(suffixes, safe_upcase(value)) do
+          true -> Map.get(suffixes, safe_upcase(value))
           false -> cleaned_value
         end
       true -> nil
@@ -643,10 +725,25 @@ defmodule AddressUS.Parser do
     end
   end
 
+  # Does a standard safe_upcase, unless the value to be upcased is a nil, in
+  # which case it returns ""
+  defp safe_upcase(nil), do: ""
+  defp safe_upcase(value), do: String.upcase(value)
+
+  # Does a standard safe_has_key, unless the value to be checked is a nil, in
+  # which case it returns false.
+  defp safe_has_key?(map, nil), do: false
+  defp safe_has_key?(map, key), do: Map.has_key?(map, key)
+
   # Does a standard safe_replace, unless the value to be modified is a nil in
   # which case it just returns a nil.
   defp safe_replace(nil, _, _), do: nil
   defp safe_replace(value, k, v), do: String.replace(value, k, v)
+
+  # Does a standard safe_starts_with?, unless the value to be modified is a nil
+  # in which case it returns false.
+  defp safe_starts_with?(nil, _), do: false
+  defp safe_starts_with?(value, k), do: String.starts_with?(value, k)
 
   # Standardizes the spacing around the commas, periods, and newlines and then
   # deletes the periods per the best practices outlined by the USPS.  It also
@@ -708,7 +805,7 @@ defmodule AddressUS.Parser do
         String.downcase(word) == "us" -> 
           "US"
         Regex.match?(~r/^(\d)/, word) && Enum.member?(word_endings, letters) ->
-          String.upcase(word)
+          safe_upcase(word)
         true ->
           String.split(word, "-") 
             |> Enum.map(&(String.capitalize(&1)))
@@ -726,7 +823,7 @@ defmodule AddressUS.Parser do
   defp contains_po_box?([]), do: false
   defp contains_po_box?(address) do
     [head|_] = address
-    full_address = address |> Enum.join(" ") |> String.upcase
+    full_address = address |> Enum.join(" ") |> safe_upcase
     !is_keyword?(head) && String.match?(full_address, ~r/BOX/)
   end
 
@@ -741,7 +838,7 @@ defmodule AddressUS.Parser do
     cond do
       string_is_number_or_fraction?(word) -> true
       Enum.member?(keywords1, word) -> true
-      Enum.member?(keywords2, String.upcase(word)) -> true
+      Enum.member?(keywords2, safe_upcase(word)) -> true
       true -> false
     end
   end
@@ -752,17 +849,18 @@ defmodule AddressUS.Parser do
     state = title_case(value)
     states = Application.get_env(:parsing, :states)
     cond do
-      Map.has_key?(states, state) -> true
-      Map.values(states) |> Enum.member?(String.upcase(state)) -> true
+      safe_has_key?(states, state) -> true
+      Map.values(states) |> Enum.member?(safe_upcase(state)) -> true
       true -> false
     end
   end
 
   # Determines if a value is a possible Suite value.
-  defp is_possible_suite_number?(value) when is_number(value), do: true
   defp is_possible_suite_number?(value) do
-    values = String.codepoints("abcdefghijklmnopqrstuvqxyz12334567890")
-    String.downcase(value) in values
+    units = Application.get_env(:parsing, :secondary_units)
+    values = Map.values(units) |> Enum.map(&(String.downcase(&1)))
+    keys = Map.keys(units) |> Enum.map(&(String.downcase(&1)))
+    values ++ keys |> Enum.member?(String.downcase(value))
   end
 
   # Determines if string can be cleanly converted into a number.

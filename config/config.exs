@@ -341,7 +341,6 @@ config :parsing, secondary_units: %{
   "Trailer" => "Trlr",
   "Unit" => "Unit",
   "Upper" => "Uppr",
-  "#" => "Pmb",
 }
 
 config :parsing, street_suffixes: %{

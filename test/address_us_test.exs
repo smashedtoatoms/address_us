@@ -562,4 +562,31 @@ defmodule AddressUSTest do
     result = parse_address("11681 US HWY 70, Clayton, NC 27520")
     assert desired_result == result
   end
+
+  test "Parse address: 435 N 1680 East Suite # 8, St. George, UT 8470" do
+    desired_result = %Address{city: "St George", state: "UT", 
+    postal: "08470", street: %Street{name: "1680",
+    primary_number: "435", pre_direction: "N", post_direction: "E", 
+    secondary_designator: "Ste",secondary_value: "8"}}
+    result = parse_address("435 N 1680 East Suite # 8, St. George, UT 8470")
+    assert desired_result == result
+  end
+
+  test "Parse address: 5 Bel Air S Parkway Suite L 1219, Bel Air, MD, 21015" do
+    desired_result = %Address{city: "Bel Air", state: "MD", 
+    postal: "21015", street: %Street{name: "Bel Air S",
+    primary_number: "5", suffix: "Pkwy",
+    secondary_designator: "Ste",secondary_value: "L1219"}}
+    result = parse_address("5 Bel Air S Parkway Suite L 1219, Bel Air, MD, 21015")
+    assert desired_result == result
+  end
+
+  test "Parse address: 140 W Hively Avenue STE 2, Bel Air, MD, 21015" do
+    desired_result = %Address{city: "Bel Air", state: "MD", 
+    postal: "21015", street: %Street{name: "Hively",
+    primary_number: "140", suffix: "Pkwy", pre_direction: "W", suffix: "Ave",
+    secondary_designator: "Ste", secondary_value: "2"}}
+    result = parse_address("140 W Hively Avenue STE 2, Bel Air, MD, 21015")
+    assert desired_result == result
+  end
 end
