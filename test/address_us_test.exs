@@ -589,4 +589,35 @@ defmodule AddressUSTest do
     result = parse_address("140 W Hively Avenue STE 2, Bel Air, MD, 21015")
     assert desired_result == result
   end
+
+  # 2242 W 5400 S, Salt Lake City, UT 75169
+  # 2242 W 5400 S, West Valley City, UT 75169
+  # 227 Fox Hill Rd Unit C-3, Orlando, FL 32803
+  # 227 Fox Hill Rd Unit#7, Orlando, FL 32803
+  # 227A Fox Hill Rd, Orlando, FL 32803
+  # 233-B South Country Drive, Waverly, VA 32803
+  # 820 A South Country Drive, Waverly, VA 32803
+  # 15 North Main St C03, Waverly, VA 32803
+  # 820 A E. Admiral Doyle Dr, Waverly, VA 32803
+  # 820 a E. Admiral Doyle Dr, Waverly, VA 32803
+  # 394 S. HWY 29, Cantonment, FL 32803
+  # 5810 Bellfort St Ste D & E, Cantonment, FL 32803
+  # 5000-16 Norwood Avenue, Space A-16, Jacksonville, FL 32208
+  # 605-13 New Market Dr. Newport News, VA 23605
+  # 21-41 Main Street, Lockport, NY 14094
+  # 18115 Highway I-30, Benton, AZ, 72015
+  # 230 E. State Route 89A, Cottonwood, AZ, 86326
+  # 5227 14th St W, Bradenton, FL, 34207
+  # 1429 San Mateo Blvd NE, Albuquerque, NM, 87110
+  # 10424 Campus Way South, Upper Marlboro, MD, 20774
+  # 3101 PGA Blvd, Palm Beach Gardens, FL 33401
+  # 2341 Rt 66, Ocean, NJ 7712
+  # 2407 M L King Ave, Flint, MI 48505
+  # 3590 W. South Jordan Pkwy, South Jordan, UT 84095
+  # 5th Street, Suite 100, Denver, CO 80219
+  # 1315 U.S. 80 E, Demopolis, AL 36732, United States
+  # 2345 Front Street, Denver, CO 80219
+  # 2345 Front St, Denver, CO 80219
+  # 5215 W Indian School Rd, Ste 103 & 104, Phoenix, AZ 85031
+  # 1093 B St, Hayward, CA, 94541
 end
