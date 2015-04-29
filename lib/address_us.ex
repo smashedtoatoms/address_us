@@ -233,33 +233,51 @@ defmodule AddressUS.Parser do
   end
 
   # Parses the number out of the address list and returns
-  # {number, leftover_address_list}
-  defp get_number(address) when not is_list(address), do: {nil, nil, nil}
-  defp get_number([]), do: {nil, nil, nil}
-  defp get_number(address), do: get_number(address, address, nil, nil, false)
-  defp get_number(address, _backup, number, box, true) do
-    {number, box, address}
+  # {number, box, possible_secondary_value, possible_secondary_designator}
+  defp get_number(address) when not is_list(address) do
+    {nil, nil, nil, nil, nil}
   end
-  defp get_number([], backup, _, _, false), do: {nil, nil, backup}
-  defp get_number(address, backup, number, box, false) do
+  defp get_number([]), do: {nil, nil, nil. nil, nil}
+  defp get_number(address) do
+    get_number(address, address, nil, nil, nil, nil, false)
+  end
+  defp get_number(address, _backup, number, box, p_val, p_des, true) do
+    n = if number == "", do: nil, else: number
+    b = if box == "", do: nil, else: box
+    v = if p_val == "", do: nil, else: p_val
+    d = if p_des == "", do: nil, else: p_des
+    {n, b, v, d, address}
+  end
+  defp get_number([], backup, _, _, _, _, false) do
+    {nil, nil, nil, nil, backup}
+  end
+  defp get_number(address, backup, number, box, p_val, p_des, false) do
     [head|tail] = address
+    {tail_head, tail_tail} = case length(tail) do
+      0 -> {"", []}
+      1 -> {hd(tail), []}
+      _ -> {hd(tail), tl(tail)}
+    end
     next_is_number = if length(tail) == 0 do 
       false
     else
       string_is_number_or_fraction?(hd(tail))
     end
+    regex = ~r/(\d+)[-\s]*([A-Za-z]+.*)/
     cond do
       address == [] -> 
-        get_number(backup, backup, number, box, true)
+        get_number(backup, backup, number, box, p_val, p_des, true)
       contains_po_box?(address) ->
         number = address 
           |> Enum.join(" ") 
           |> String.split(~r/(?i)BOX\s/)
           |> tl
           |> hd
-        get_number([], backup, safe_replace(number, "#", ""), "PO BOX", true)
+        get_number([], backup, safe_replace(number, "#", ""), "PO BOX", p_val, 
+          p_des, true)
       number == nil && string_is_number_or_fraction?(head) && next_is_number ->
-        get_number(tl(tail), backup, head <> " " <> hd(tail), box, true)
+        get_number(tl(tail), backup, head <> " " <> hd(tail), box, p_val, 
+          p_des, true)
       Enum.member?(address, "&") ->
         new_address = address
           |> Enum.join(" ")
@@ -267,17 +285,38 @@ defmodule AddressUS.Parser do
           |> tl
           |> hd
           |> String.split(" ")
-        get_number(new_address, backup, nil, box, false)
+        get_number(new_address, backup, nil, box, p_val, p_des, false)
       number == nil && string_is_number_or_fraction?(head) ->
-        get_number(tail, backup, head, box, true)
+        alphanumeric = "ABCDFHIJLKMOPQRGTUVXYZ1234567890"
+        case String.contains?(alphanumeric, safe_upcase(tail_head)) do
+          false -> 
+            get_number(tail, backup, head, box, p_val, p_des, true)
+          true -> 
+            get_number(tail_tail, backup, head, box, safe_upcase(tail_head), 
+              p_des, true)
+        end
       number == nil && string_is_number_or_fraction?(
-          safe_replace(head, ~r/(\d+)[A-Za-z]/, "\\1")) ->
-        get_number(tail, backup, safe_replace(head, ~r/(\d+)[A-Za-z]/, "\\1"), 
-          box, true)
+          safe_replace(head, regex, "\\1")) ->
+        endings = ["ST", "ND", "RD", "TH"]
+        new_number = safe_replace(head, regex, "\\1")
+        new_value = safe_replace(head, regex, "\\2")
+        case Enum.member?(endings, new_value) do
+          false ->
+            get_number(tail, backup, new_number, box, new_value, p_des, true)
+          true ->
+            get_number(backup, backup, number, box, new_value, p_des, true)
+        end
       number == nil && is_state?(head) ->
-        get_number(address, backup, number, box, true)
+        get_number(address, backup, number, box, p_val, p_des, true)
+      String.contains?(head, "-") ->
+        [h|t] = String.split("-")
+        secondary_value = case length(t) do
+          0 -> nil
+          _ -> hd(tail)
+        end
+        get_number(tail, backup, h, box, secondary_value, "Ste", true)
       true ->
-        get_number(tail, backup, number, box, false)
+        get_number(tail, backup, number, box, p_val, p_des, false)
     end
   end
 
@@ -516,7 +555,8 @@ defmodule AddressUS.Parser do
   defp get_street(address), do: get_street(address, nil, false)
   defp get_street([], street, false), do: get_street([], street, true)
   defp get_street(_address, street, true) do
-    corner_case_street_names = %{"PGA": "PGA", "ROUTE": "Route", "RT": "Route" }
+    corner_case_street_names = 
+      %{"PGA" => "PGA", "ROUTE" => "Route", "RT" => "Route"}
     filtered_street = safe_upcase(street) |> safe_replace(~r/\s(\d+)/, "")
     directions = Application.get_env(:parsing, :directions)
     rev_directions = Application.get_env(:parsing, :reversed_directions)
@@ -597,12 +637,14 @@ defmodule AddressUS.Parser do
 
   # Parses an address list for all of the requisite address parts and returns
   # a Street module.
+  # p_val = possible secondary value
+  # p_des = possible secondary designator
   defp parse_address_list(address) when not is_list(address), do: nil
   defp parse_address_list([]), do: nil
   defp parse_address_list([""]), do: nil
   defp parse_address_list(address) do
     cleaned_address = Enum.map(address, &(safe_replace(&1, ",", "")))
-    {secondary_designator, secondary_value, pmb, address_no_secondary} = 
+    {designator, value, pmb, address_no_secondary} = 
       get_secondary(cleaned_address)
     {post_direction, address_no_secondary_direction} = 
       get_post_direction(address_no_secondary)
@@ -610,20 +652,45 @@ defmodule AddressUS.Parser do
       get_suffix(address_no_secondary_direction)
     reversed_address_remnants = 
       Enum.reverse(address_no_suffix)
-    {primary_number, box, address_no_number} = 
+    {primary_number, box, p_val, p_des, address_no_number} = 
       get_number(reversed_address_remnants)
     {pre_direction, address_no_pre_direction} =
       get_pre_direction(address_no_number)
     street_name = get_street(address_no_pre_direction)
+
     name = case street_name == nil && !(box == nil) do
       true -> box
       false -> street_name
     end
 
-    %Street{secondary_designator: secondary_designator, 
+    {final_name, final_secondary_val} = cond do
+      name == nil -> 
+        cond do
+          p_val != nil && p_des == nil -> {p_val, nil}
+          true -> {nil, p_val}
+        end
+      true -> 
+        {name, p_val}
+    end
+
+    final_secondary_designator = cond do
+      designator == nil && p_des != nil -> p_des
+      true -> designator
+    end
+
+    final_secondary_value = cond do
+      p_val == nil -> value
+      true -> 
+        cond do
+          value == nil -> final_secondary_val
+          true -> value
+        end
+    end
+
+    %Street{secondary_designator: final_secondary_designator, 
     post_direction: post_direction, pre_direction: pre_direction,
-    secondary_value: secondary_value,  pmb: pmb, suffix: suffix, 
-    primary_number: primary_number, name: name}
+    secondary_value: final_secondary_value,  pmb: pmb, suffix: suffix, 
+    primary_number: primary_number, name: final_name}
   end
 
   # Parses postal value passed to it and returns {zip_code, zip_plus_4}

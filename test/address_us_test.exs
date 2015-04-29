@@ -112,7 +112,7 @@ defmodule AddressUSTest do
     desired_result = %Address{city: "Denver",
       postal: "80219", state: "CO", street: %Street{
         name: "Meade", primary_number: "2345", pre_direction: "SW",
-        suffix: "St"}}
+        suffix: "St", secondary_value: "B"}}
     result = parse_address("2345B SW Meade St, Denver CO, 80219")
     assert desired_result == result
   end
@@ -622,30 +622,208 @@ defmodule AddressUSTest do
     assert desired_result == result
   end
 
-  # 227A Fox Hill Rd, Orlando, FL 32803
-  # 233-B South Country Drive, Waverly, VA 32803
-  # 820 A South Country Drive, Waverly, VA 32803
-  # 15 North Main St C03, Waverly, VA 32803
-  # 820 A E. Admiral Doyle Dr, Waverly, VA 32803
-  # 820 a E. Admiral Doyle Dr, Waverly, VA 32803
-  # 394 S. HWY 29, Cantonment, FL 32803
-  # 5810 Bellfort St Ste D & E, Cantonment, FL 32803
-  # 5000-16 Norwood Avenue, Space A-16, Jacksonville, FL 32208
-  # 605-13 New Market Dr. Newport News, VA 23605
-  # 21-41 Main Street, Lockport, NY 14094
-  # 18115 Highway I-30, Benton, AZ, 72015
-  # 230 E. State Route 89A, Cottonwood, AZ, 86326
-  # 5227 14th St W, Bradenton, FL, 34207
-  # 1429 San Mateo Blvd NE, Albuquerque, NM, 87110
-  # 10424 Campus Way South, Upper Marlboro, MD, 20774
-  # 3101 PGA Blvd, Palm Beach Gardens, FL 33401
-  # 2341 Rt 66, Ocean, NJ 7712
-  # 2407 M L King Ave, Flint, MI 48505
-  # 3590 W. South Jordan Pkwy, South Jordan, UT 84095
-  # 5th Street, Suite 100, Denver, CO 80219
-  # 1315 U.S. 80 E, Demopolis, AL 36732, United States
-  # 2345 Front Street, Denver, CO 80219
-  # 2345 Front St, Denver, CO 80219
-  # 5215 W Indian School Rd, Ste 103 & 104, Phoenix, AZ 85031
-  # 1093 B St, Hayward, CA, 94541
+  test "Parse address: 227A Fox Hill Rd, Orlando, FL 32803" do
+    desired_result = %Address{city: "Orlando", state: "FL", 
+    postal: "32803", street: %Street{name: "Fox Hill",primary_number: "227",
+    secondary_value: "A", suffix: "Rd"}}
+    result = parse_address("227A Fox Hill Rd, Orlando, FL 32803")
+    assert desired_result == result
+  end
+
+  test "233-B South Country Drive, Waverly, VA 32803" do
+    desired_result = %Address{city: "Waverly", state: "VA", 
+    postal: "32803", street: %Street{name: "Country",primary_number: "233",
+    secondary_value: "B", pre_direction: "S", suffix: "Dr"}}
+    result = parse_address("233-B South Country Drive, Waverly, VA 32803")
+    assert desired_result == result
+  end
+
+  test "820 A South Country Drive, Waverly, VA 32803" do
+    desired_result = %Address{city: "Waverly", state: "VA", 
+    postal: "32803", street: %Street{name: "Country",primary_number: "820",
+    secondary_value: "A", pre_direction: "S", suffix: "Dr"}}
+    result = parse_address("820 A South Country Drive, Waverly, VA 32803")
+    assert desired_result == result
+  end
+
+  # test "15 North Main St C03, Waverly, VA 32803" do
+  #   desired_result = %Address{city: "Waverly", state: "VA", 
+  #   postal: "32803", street: %Street{name: "Main",primary_number: "15",
+  #   secondary_value: "C03", pre_direction: "N", suffix: "St"}}
+  #   result = parse_address("15 North Main St C03, Waverly, VA 32803")
+  #   assert desired_result == result
+  # end
+
+  test "820 A E. Admiral Doyle Dr, Waverly, VA 32803" do
+    desired_result = %Address{city: "Waverly", state: "VA", 
+    postal: "32803", street: %Street{name: "Admiral Doyle",
+    primary_number: "820", secondary_value: "A", pre_direction: "E", 
+    suffix: "Dr"}}
+    result = parse_address("820 A E. Admiral Doyle Dr, Waverly, VA 32803")
+    assert desired_result == result
+  end
+
+  test "820 a E. Admiral Doyle Dr, Waverly, VA 32803" do
+    desired_result = %Address{city: "Waverly", state: "VA", 
+    postal: "32803", street: %Street{name: "Admiral Doyle",
+    primary_number: "820", secondary_value: "A", pre_direction: "E", 
+    suffix: "Dr"}}
+    result = parse_address("820 a E. Admiral Doyle Dr, Waverly, VA 32803")
+    assert desired_result == result
+  end
+
+  test "394 S. HWY 29, Cantonment, FL 32803" do
+    desired_result = %Address{city: "Cantonment", state: "FL", 
+    postal: "32803", street: %Street{name: "Hwy 29",
+    primary_number: "394", pre_direction: "S"}}
+    result = parse_address("394 S. HWY 29, Cantonment, FL 32803")
+    assert desired_result == result
+  end
+
+  test "5810 Bellfort St Ste D & E, Cantonment, FL 32803" do
+    desired_result = %Address{city: "Cantonment", state: "FL", 
+    postal: "32803", street: %Street{name: "Bellfort",
+    primary_number: "5810", secondary_designator: "Ste", secondary_value: "D", 
+    suffix: "St"}}
+    result = parse_address("5810 Bellfort St Ste D & E, Cantonment, FL 32803")
+    assert desired_result == result
+  end
+
+  # test "5000-16 Norwood Avenue, Space A-16, Jacksonville, FL 32208" do
+  #   desired_result = %Address{city: "Jacksonville", state: "FL", 
+  #   postal: "32208", street: %Street{name: "Norwood", primary_number: "5000", 
+  #   secondary_designator: "Spc", secondary_value: "A-16", suffix: "Ave"}}
+  #   result = parse_address("5000-16 Norwood Avenue, Space A-16, Jacksonville, FL 32208")
+  #   assert desired_result == result
+  # end
+
+  # test "605-13 New Market Dr. Newport News, VA 23605" do
+  #   desired_result = %Address{city: "Newport News", state: "VA", 
+  #   postal: "23605", street: %Street{name: "New Market", primary_number: "605", 
+  #   secondary_value: "13", suffix: "Dr"}}
+  #   result = parse_address("605-13 New Market Dr. Newport News, VA 23605")
+  #   assert desired_result == result
+  # end
+
+  # test "21-41 Main Street, Lockport, NY 14094" do
+  #   desired_result = %Address{city: "Lockport", state: "NY", 
+  #   postal: "14094", street: %Street{name: "Main", primary_number: "21", 
+  #   secondary_value: "41", suffix: "St"}}
+  #   result = parse_address("21-41 Main Street, Lockport, NY 14094")
+  #   assert desired_result == result
+  # end
+
+  # test "18115 Highway I-30, Benton, AZ, 72015" do
+  #   desired_result = %Address{city: "Benton", state: "AZ", 
+  #   postal: "72015", street: %Street{name: "I-30", primary_number: "18115"}}
+  #   result = parse_address("18115 Highway I-30, Benton, AZ, 72015")
+  #   assert desired_result == result
+  # end
+
+  # test "230 E. State Route 89A, Cottonwood, AZ, 86326" do
+  #   desired_result = %Address{city: "Cottonwood", state: "AZ", 
+  #   postal: "86326", street: %Street{name: "State Route 89A",
+  #   primary_number: "230", pre_direction: "E"}}
+  #   result = parse_address("230 E. State Route 89A, Cottonwood, AZ, 86326")
+  #   assert desired_result == result
+  # end
+
+  test "5227 14th St W, Bradenton, FL, 34207" do
+    desired_result = %Address{city: "Bradenton", state: "FL", 
+    postal: "34207", street: %Street{name: "14th",
+    primary_number: "5227", post_direction: "W" ,
+    suffix: "St"}}
+    result = parse_address("5227 14th St W, Bradenton, FL, 34207")
+    assert desired_result == result
+  end
+
+  test "1429 San Mateo Blvd NE, Albuquerque, NM, 87110" do
+    desired_result = %Address{city: "Albuquerque", state: "NM", 
+    postal: "87110", street: %Street{name: "San Mateo",
+    primary_number: "1429", post_direction: "NE" ,
+    suffix: "Blvd"}}
+    result = parse_address("1429 San Mateo Blvd NE, Albuquerque, NM, 87110")
+    assert desired_result == result
+  end
+
+  test "10424 Campus Way South, Upper Marlboro, MD, 20774" do
+    desired_result = %Address{city: "Upper Marlboro", state: "MD", 
+    postal: "20774", street: %Street{name: "Campus",
+    primary_number: "10424", post_direction: "S" ,
+    suffix: "Way"}}
+    result = parse_address("10424 Campus Way South, Upper Marlboro, MD, 20774")
+    assert desired_result == result
+  end
+
+  test "3101 PGA Blvd, Palm Beach Gardens, FL 33401" do
+    desired_result = %Address{city: "Palm Beach Gardens", state: "FL", 
+    postal: "33401", street: %Street{name: "PGA",
+    primary_number: "3101", suffix: "Blvd"}}
+    result = parse_address("3101 PGA Blvd, Palm Beach Gardens, FL 33401")
+    assert desired_result == result
+  end
+
+  test "2341 Rt 66, Ocean, NJ 7712" do
+    desired_result = %Address{city: "Ocean", state: "NJ", 
+    postal: "07712", street: %Street{name: "Route 66",
+    primary_number: "2341"}}
+    result = parse_address("2341 Rt 66, Ocean, NJ 7712")
+    assert desired_result == result
+  end
+
+  test "2407 M L King Ave, Flint, MI 48505" do
+    desired_result = %Address{city: "Flint", state: "MI", 
+    postal: "48505", street: %Street{name: "Martin Luther King",
+    primary_number: "2407", suffix: "Ave"}}
+    result = parse_address("2407 M L King Ave, Flint, MI 48505")
+    assert desired_result == result
+  end
+
+  # test "3590 W. South Jordan Pkwy, South Jordan, UT 84095" do
+  #   desired_result = %Address{city: "South Jordan", state: "UT", 
+  #   postal: "84095", street: %Street{name: "South Jordan",
+  #   primary_number: "3590", pre_direction: "W", suffix: "Pkwy"}}
+  #   result = parse_address("3590 W. South Jordan Pkwy, South Jordan, UT 84095")
+  #   assert desired_result == result
+  # end
+
+  # test "5th Street, Suite 100, Denver, CO 80219" do
+  #   desired_result = %Address{city: "Denver", state: "CO", 
+  #   postal: "80219", street: %Street{name: "5th", suffix: "St"}}
+  #   result = parse_address("5th Street, Suite 100, Denver, CO 80219")
+  #   assert desired_result == result
+  # end
+
+  # test "1315 U.S. 80 E, Demopolis, AL 36732, United States" do
+  #   desired_result = %Address{city: "Demopolis", state: "AL", 
+  #   postal: "36732", street: %Street{name: "US 80",
+  #   primary_number: "1315", post_direction: "E"}}
+  #   result = parse_address("1315 U.S. 80 E, Demopolis, AL 36732, United States")
+  #   assert desired_result == result
+  # end
+
+  test "2345 Front Street, Denver, CO 80219" do
+    desired_result = %Address{city: "Denver", state: "CO", 
+    postal: "80219", street: %Street{name: "Front",
+    primary_number: "2345", suffix: "St"}}
+    result = parse_address("2345 Front Street, Denver, CO 80219")
+    assert desired_result == result
+  end
+
+  # test "5215 W Indian School Rd, Ste 103 & 104, Phoenix, AZ 85031" do
+  #   desired_result = %Address{city: "Phoenix", state: "AZ", 
+  #   postal: "85031", street: %Street{name: "Indian School",
+  #   primary_number: "5215", suffix: "Rd", pre_direction: "W",
+  #   secondary_designator: "Ste", secondary_value: "103"}}
+  #   result = parse_address("5215 W Indian School Rd, Ste 103 & 104, Phoenix, AZ 85031")
+  #   assert desired_result == result
+  # end
+
+  test "1093 B St, Hayward, CA, 94541" do
+    desired_result = %Address{city: "Hayward", state: "CA", 
+    postal: "94541", street: %Street{name: "B",
+    primary_number: "1093", suffix: "St"}}
+    result = parse_address("1093 B St, Hayward, CA, 94541")
+    assert desired_result == result
+  end
 end
