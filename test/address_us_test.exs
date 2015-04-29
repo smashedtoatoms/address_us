@@ -590,10 +590,38 @@ defmodule AddressUSTest do
     assert desired_result == result
   end
 
-  # 2242 W 5400 S, Salt Lake City, UT 75169
-  # 2242 W 5400 S, West Valley City, UT 75169
-  # 227 Fox Hill Rd Unit C-3, Orlando, FL 32803
-  # 227 Fox Hill Rd Unit#7, Orlando, FL 32803
+  test "Parse address: 2242 W 5400 S, Salt Lake City, UT 75169" do
+    desired_result = %Address{city: "Salt Lake City", state: "UT", 
+    postal: "75169", street: %Street{name: "5400",primary_number: "2242",
+    pre_direction: "W", post_direction: "S"}}
+    result = parse_address("2242 W 5400 S, Salt Lake City, UT 75169")
+    assert desired_result == result
+  end
+
+  test "Parse address: 2242 W 5400 S, West Valley City, UT 75169" do
+    desired_result = %Address{city: "West Valley City", state: "UT", 
+    postal: "75169", street: %Street{name: "5400",primary_number: "2242",
+    pre_direction: "W", post_direction: "S"}}
+    result = parse_address("2242 W 5400 S, West Valley City, UT 75169")
+    assert desired_result == result
+  end
+
+  test "Parse address: 227 Fox Hill Rd Unit C-3, Orlando, FL 32803" do
+    desired_result = %Address{city: "Orlando", state: "FL", 
+    postal: "32803", street: %Street{name: "Fox Hill",primary_number: "227",
+    secondary_designator: "Unit", secondary_value: "C-3", suffix: "Rd"}}
+    result = parse_address("227 Fox Hill Rd Unit C-3, Orlando, FL 32803")
+    assert desired_result == result
+  end
+
+  test "Parse address: 227 Fox Hill Rd Unit#7, Orlando, FL 32803" do
+    desired_result = %Address{city: "Orlando", state: "FL", 
+    postal: "32803", street: %Street{name: "Fox Hill",primary_number: "227",
+    secondary_designator: "Unit", secondary_value: "7", suffix: "Rd"}}
+    result = parse_address("227 Fox Hill Rd Unit#7, Orlando, FL 32803")
+    assert desired_result == result
+  end
+
   # 227A Fox Hill Rd, Orlando, FL 32803
   # 233-B South Country Drive, Waverly, VA 32803
   # 820 A South Country Drive, Waverly, VA 32803

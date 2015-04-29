@@ -193,7 +193,10 @@ defmodule AddressUS.Parser do
   end
   defp get_city(address, backup, city, false) do
     [head|tail] = address
-    tail_head = if length(tail) > 0, do: hd(tail), else: ""
+    tail_head = case length(tail) > 0 do
+      false -> ""
+      true -> hd(tail)
+    end
     cond do
       is_keyword?(head) && city == nil -> 
         get_city(tail, backup, merge_names(city, head), false)
@@ -216,7 +219,6 @@ defmodule AddressUS.Parser do
           true ->
             get_city(address, backup, city, true)
         end
-        get_city(address, backup, city, true)
       is_keyword?(head) ->
         get_city(address, backup, city, true)
       contains_po_box?(tail) ->
@@ -247,7 +249,8 @@ defmodule AddressUS.Parser do
       string_is_number_or_fraction?(hd(tail))
     end
     cond do
-      address == [] -> get_number(backup, backup, number, box, true)
+      address == [] -> 
+        get_number(backup, backup, number, box, true)
       contains_po_box?(address) ->
         number = address 
           |> Enum.join(" ") 
@@ -705,8 +708,8 @@ defmodule AddressUS.Parser do
     suffix_values = capitalized_keys ++ capitalized_values
     cond do
       Enum.member?(suffix_values, cleaned_value) -> 
-        case safe_has_key?(suffixes, safe_upcase(value)) do
-          true -> Map.get(suffixes, safe_upcase(value))
+        case safe_has_key?(suffixes, safe_upcase(cleaned_value)) do
+          true -> Map.get(suffixes, safe_upcase(cleaned_value))
           false -> cleaned_value
         end
       true -> nil
