@@ -73,7 +73,7 @@ defmodule AddressUSConfig do
       "Armed Forces Pacific" => "AP"
     }
   end
-  
+
   def countries do
     %{
       "AFGHANISTAN" => "AF",
@@ -321,7 +321,7 @@ defmodule AddressUSConfig do
       "ZIMBABWE?" => "ZW"
     }
   end
-  
+
   def secondary_units do
     %{
       "Apartment" => "Apt",
@@ -349,7 +349,7 @@ defmodule AddressUSConfig do
       "Upper" => "Uppr",
     }
   end
-  
+
   def street_suffixes do
     %{
       "ALLEE" => "Aly",
@@ -921,7 +921,7 @@ defmodule AddressUSConfig do
       "USHWY" => "US Highway"
     }
   end
-  
+
   def directions do
     %{
       "North" => "N",
@@ -938,7 +938,7 @@ defmodule AddressUSConfig do
       "South West" => "SW"
     }
   end
-  
+
   def reversed_directions do
     %{
       "N" => "North",
