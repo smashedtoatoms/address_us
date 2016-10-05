@@ -3,32 +3,30 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AddressUS.Parser – AddressUS v0.1.1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.10.0">
-    <link rel="stylesheet" href="dist/app.css" />
+    <meta name="generator" content="ExDoc v0.14.1">
+    <title>AddressUS.Parser – AddressUS v0.2.1</title>
+    <link rel="stylesheet" href="dist/app-23e810f3fe.css" />
+    
     <script src="dist/sidebar_items.js"></script>
   </head>
   <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
 
     <div class="main">
 <button class="sidebar-toggle">
   <i class="icon-menu"></i>
 </button>
 <section class="sidebar">
-  <button class="sidebar-toggle">
-    <i class="icon-menu"></i>
-  </button>
 
   
-  <a href="extra-api-reference.html" class="sidebar-projectLink">
+  <a href="api-reference.html" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
         AddressUS
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.1.1
+        v0.2.1
       </h2>
     </div>
     
@@ -50,16 +48,17 @@
 
     
   </ul>
-
+  <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
-  <div class="sidebar-noResults"></div>
 </section>
 
 <section class="content">
-  <div id="content" class="content-inner">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
 
 
       <h1>
+        <small class="visible-xs">AddressUS v0.2.1</small>
         AddressUS.Parser
         
         
@@ -70,7 +69,7 @@
       </h1>
 
       
-        <section id="moduledoc" class="docstring">
+        <section id="moduledoc">
           <p>Parses US Addresses.</p>
 
         </section>
@@ -239,16 +238,21 @@ parsed has a comma in it that is not part of what you want to parse.</p>
       <i class="icon-link"></i>
     </a>
     <span class="signature">abbreviate_state(raw_state)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L125" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Abbreviates the state provided.</p>
-<h2>Example</h2>
+<h2 id="abbreviate_state/1-example" class="section-heading">
+  <a href="#abbreviate_state/1-example" class="hover-link"><i class="icon-link"></i></a>
+  Example
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.abbreviate_state(&quot;Wyoming&quot;)
 &quot;WY&quot;
 iex&gt; AddressUS.Parser.abbreviate_state(&quot;wyoming&quot;)
@@ -266,17 +270,22 @@ nil</code></pre>
       <i class="icon-link"></i>
     </a>
     <span class="signature">clean_phone_number(phone)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L81" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Removes non-numeric characters from the phone number and then returns the
 integer.</p>
-<h2>Examples</h2>
+<h2 id="clean_phone_number/1-examples" class="section-heading">
+  <a href="#clean_phone_number/1-examples" class="hover-link"><i class="icon-link"></i></a>
+  Examples
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.clean_phone_number(&quot;(303) 310-7802&quot;)
 3033107802</code></pre>
 
@@ -288,16 +297,21 @@ integer.</p>
       <i class="icon-link"></i>
     </a>
     <span class="signature">filter_country_code(phone)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L105" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Removes country code and associated punctuation from the phone number.</p>
-<h2>Examples</h2>
+<h2 id="filter_country_code/1-examples" class="section-heading">
+  <a href="#filter_country_code/1-examples" class="hover-link"><i class="icon-link"></i></a>
+  Examples
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 303-310-7802&quot;)
 &quot;303-310-7802&quot;
 iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 (303) 310-7802&quot;)
@@ -315,16 +329,21 @@ iex&gt; AddressUS.Parser.filter_country_code(&quot;1-303-310-7802&quot;)
       <i class="icon-link"></i>
     </a>
     <span class="signature">get_country_code(country_name)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L150" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Converts the country to the 2 digit ISO country code.  “US” is default.</p>
-<h2>Example</h2>
+<h2 id="get_country_code/1-example" class="section-heading">
+  <a href="#get_country_code/1-example" class="hover-link"><i class="icon-link"></i></a>
+  Example
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.get_country_code(nil)
 &quot;US&quot;
 iex&gt; AddressUS.Parser.get_country_code(&quot;Afghanistan&quot;)
@@ -340,21 +359,30 @@ iex&gt; AddressUS.Parser.get_country_code(&quot;AF&quot;)
       <i class="icon-link"></i>
     </a>
     <span class="signature">parse_address(messy_address)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L44" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Parses a raw address into all of its requisite parts according to USPS
 suggestions for address parsing.</p>
-<h2>Known Bugs</h2>
+<h2 id="parse_address/1-known-bugs" class="section-heading">
+  <a href="#parse_address/1-known-bugs" class="hover-link"><i class="icon-link"></i></a>
+  Known Bugs
+</h2>
+
 <pre><code class="elixir">1) if street suffix is left off while parsing a full multi-line address,
 it will fail unless there is a comma or newline separating the street
 name from the city.</code></pre>
-<h2>Examples</h2>
+<h2 id="parse_address/1-examples" class="section-heading">
+  <a href="#parse_address/1-examples" class="hover-link"><i class="icon-link"></i></a>
+  Examples
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address(&quot;2345 S B Street, Denver, CO 80219&quot;)
 %Address{city: &quot;Denver&quot;, plus_4: nil, postal: &quot;80219&quot;,
 state: &quot;CO&quot;, street: %Street{name: &quot;B&quot;, pmb: nil,
@@ -369,17 +397,22 @@ secondary_designator: nil, secondary_value: nil, suffix: &quot;St&quot;}}</code>
       <i class="icon-link"></i>
     </a>
     <span class="signature">parse_address_line(invalid)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L65" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Parses the raw street portion of an address into its requisite parts
 according to USPS suggestions for address parsing.</p>
-<h2>Examples</h2>
+<h2 id="parse_address_line/1-examples" class="section-heading">
+  <a href="#parse_address_line/1-examples" class="hover-link"><i class="icon-link"></i></a>
+  Examples
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address_line(&quot;2345 S. Beade St&quot;)
 %Street{name: &quot;Beade&quot;, pmb: nil, post_direction: nil, pre_direction: &quot;S&quot;,
 primary_number: &quot;2345&quot;, secondary_designator: nil, secondary_value: nil,
@@ -393,18 +426,23 @@ suffix: &quot;St&quot;}</code></pre>
       <i class="icon-link"></i>
     </a>
     <span class="signature">parse_csv(csv)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L169" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     <p>Parses a csv, but instead of parsing at every comma, it only splits at the
 last one found.  This allows it to handle situations where the first value
 parsed has a comma in it that is not part of what you want to parse.</p>
-<h2>Example</h2>
+<h2 id="parse_csv/1-example" class="section-heading">
+  <a href="#parse_csv/1-example" class="hover-link"><i class="icon-link"></i></a>
+  Example
+</h2>
+
 <pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_csv(&quot;test/test.csv&quot;)
 %{&quot;Something Horrible, (The worst place other than Wyoming)&quot; =&gt; &quot;SH&quot;,
 &quot;Wyoming&quot; =&gt; &quot;WY&quot;}</code></pre>
@@ -417,13 +455,14 @@ parsed has a comma in it that is not part of what you want to parse.</p>
       <i class="icon-link"></i>
     </a>
     <span class="signature">title_case(value)</span>
-      
+    
       <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L875" class="view-source" rel="help" title="View Source">
        <i class="icon-code"></i>
      </a>
     
+    
+    
   </div>
-  
   <section class="docstring">
     
   </section>
@@ -435,22 +474,24 @@ parsed has a comma in it that is not part of what you want to parse.</p>
       
 
       
-        <footer class="footer">
-      <p>
-        <span class="line">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.10.0),
-        </span>
-        <span class="line">
-          designed by
-          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.14.1),
           </span>
-      </p>
-    </footer>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
   </div>
 </section>
 </div>
-    <script src="dist/app.js"></script>
+  <script src="dist/app-5d1225399a.js"></script>
   </body>
 </html>
 
