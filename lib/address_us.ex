@@ -238,7 +238,7 @@ defmodule AddressUS.Parser do
   defp get_number(address) when not is_list(address) do
     {nil, nil, nil, nil, nil}
   end
-  defp get_number([]), do: {nil, nil, nil. nil, nil}
+  defp get_number([]), do: {nil, nil, nil, nil, nil}
   defp get_number(address) do
     get_number(address, address, nil, nil, nil, nil, false)
   end
