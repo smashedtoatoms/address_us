@@ -3,14 +3,14 @@ defmodule AddressUS.Mixfile do
 
   def project do
     [app: :address_us,
-     version: "0.2.1",
-     elixir: "~> 1.3.0",
+     version: "0.3.0",
+     elixir: ">= 1.3.0",
      name: "AddressUS",
      source_url: "https://github.com/smashedtoatoms/address_us",
      homepage_url: "https://github.com/smashedtoatoms/address_us",
-     description: description,
-     package: package,
-     deps: deps]
+     description: description(),
+     package: package(),
+     deps: deps()]
   end
 
   # Configuration for the OTP application
