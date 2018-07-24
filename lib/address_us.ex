@@ -128,7 +128,7 @@ defmodule AddressUS.Parser do
 
     states = AddressUSConfig.states()
     cond do
-      safe_has_key?(states, state) == true -> 
+      safe_has_key?(states, state) == true ->
         Map.get(states, state)
       Enum.member?(Map.values(states), safe_upcase(state)) == true ->
         safe_upcase(state)
@@ -701,11 +701,11 @@ defmodule AddressUS.Parser do
       Regex.match?(~r/^\d?\d?\d?\d?\d-\d?\d?\d?\d$/, postal) ->
         [dirty_zip|tail] = String.split(postal, "-")
         [dirty_plus4|_] = tail
-        zip = dirty_zip |> safe_replace(",", "") |> String.rjust(5, ?0)
-        plus4 = dirty_plus4 |> safe_replace(",", "") |> String.rjust(4, ?0)
+        zip = dirty_zip |> safe_replace(",", "") |> String.pad_leading(5, "0")
+        plus4 = dirty_plus4 |> safe_replace(",", "") |> String.pad_leading(4, "0")
         {zip, plus4}
       Regex.match?(~r/^\d?\d?\d?\d?\d$/, postal) ->
-        clean_postal = postal |> String.rjust(5, ?0) |> safe_replace(",", "")
+        clean_postal = postal |> String.pad_leading(5, "0") |> safe_replace(",", "")
         {clean_postal , nil}
       true -> {nil, nil}
     end

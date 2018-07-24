@@ -3,7 +3,7 @@ defmodule AddressUSConfig do
   Contains all of the config parameters for the address parser.
   """
 
-  def states do 
+  def states do
     %{
       "Alabama" => "AL",
       "Alaska" => "AK",
@@ -358,7 +358,6 @@ defmodule AddressUSConfig do
       "ALY" => "Aly",
       "ANEX" => "Anx",
       "ANNEX" => "Anx",
-      "ANNEX" => "Anx",
       "ANX" => "Anx",
       "ARC" => "Arc",
       "ARCADE" => "Arc",
@@ -448,12 +447,10 @@ defmodule AddressUSConfig do
       "CRT" => "Ct",
       "CT" => "Ct",
       "COURTS" => "Cts",
-      "CT" => "Cts",
       "COVE" => "Cv",
       "CV" => "Cv",
       "COVES" => "Cvs",
       "CK" => "Crk",
-      "CR" => "Crk",
       "CREEK" => "Crk",
       "CRK" => "Crk",
       "CRECENT" => "Cres",
@@ -887,12 +884,10 @@ defmodule AddressUSConfig do
       "COUNTRY ROAD" => "County Road",
       "CR" => "County Road",
       "CNTY RD" => "County Road",
-      "EXPRESSWAY" => "Expressway",
       "FARM TO MARKET" => "Fm",
       "FM" => "Fm",
       "HWY FM" => "Fm",
       "BYPASS HIGHWAY" => "Byp",
-      "BYPASS" => "Byp",
       "FRONTAGE ROAD" => "Frontage Rd",
       "FRONTAGE RD" => "Frontage Rd",
       "BYP ROAD HIGHWAY" => "Bypass Rd",
