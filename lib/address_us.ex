@@ -208,7 +208,7 @@ defmodule AddressUS.Parser do
   defp get_city([], backup, _city, false), do: {nil, backup}
 
   defp get_city(address, _backup, city, true) do
-    {safe_replace(city, ",", ""), address}
+    {safe_replace(title_case(city), ",", ""), address}
   end
 
   defp get_city(address, backup, city, false) do
@@ -1016,7 +1016,7 @@ defmodule AddressUS.Parser do
     |> safe_replace(~r/ US$/, "")
     |> safe_replace(~r/US$/, "")
     |> safe_replace(~r/\(SEC\)/, "")
-    |> safe_replace(~r/U.S./, "US")
+    |> safe_replace(~r/U\.S\./, "US")
     |> safe_replace(~r/\sM L King\s/, " Martin Luther King ")
     |> safe_replace(~r/\sMLK\s/, " Martin Luther King ")
     |> safe_replace(~r/\sMLKING\s/, " Martin Luther King ")
@@ -1073,6 +1073,7 @@ defmodule AddressUS.Parser do
         true ->
           String.split(word, "-")
           |> Enum.map(&String.capitalize(&1))
+          |> Enum.map(&upcase_directions/1)
           |> Enum.join("-")
       end
     end
@@ -1081,6 +1082,10 @@ defmodule AddressUS.Parser do
     |> Enum.map(&make_title_case.(&1))
     |> Enum.join(" ")
   end
+
+  defp upcase_directions(str) when str in ["Ne", "Nw", "Se", "Sw"], do: String.upcase(str)
+
+  defp upcase_directions(str), do: str
 
   # Determines if address list contains a PO Box.
   defp contains_po_box?(address) when not is_list(address), do: false

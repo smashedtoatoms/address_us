@@ -961,6 +961,8 @@ defmodule AddressUSTest do
   end
 
   test "Parse address: 2242 W 5400 S, Salt Lake City, UT 75169" do
+    addr = "2242 W 5400 S, Salt Lake City, UT 75169"
+
     desired_result = %Address{
       city: "Salt Lake City",
       state: "UT",
@@ -973,8 +975,8 @@ defmodule AddressUSTest do
       }
     }
 
-    result = parse_address("2242 W 5400 S, Salt Lake City, UT 75169")
-    assert desired_result == result
+    assert desired_result == parse_address(addr)
+    assert desired_result == String.upcase(addr) |> parse_address()
   end
 
   test "Parse address: 2242 W 5400 S, West Valley City, UT 75169" do
