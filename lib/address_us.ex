@@ -807,6 +807,9 @@ defmodule AddressUS.Parser do
       Enum.map(address, &safe_replace(&1, ",", ""))
       |> log_term("cleaned")
 
+    # Move Parens to extraneous here unless they embed a secondary (ste 223) in which case
+    # should be parsed as a secondary
+
     {designator, value, pmb, address_no_secondary} =
       get_secondary(cleaned_address)
       |> log_term("get_secondary")
@@ -814,6 +817,8 @@ defmodule AddressUS.Parser do
     {post_direction, address_no_secondary_direction} =
       get_post_direction(address_no_secondary)
       |> log_term("get_post_direction")
+
+    # get_suffix should move anything after the suffix to extraneous
 
     {suffix, raw_suffix, address_no_suffix} =
       get_suffix(address_no_secondary_direction)
@@ -1081,9 +1086,9 @@ defmodule AddressUS.Parser do
     |> safe_replace(~r/\sMLK\s/, " Martin Luther King ")
     |> safe_replace(~r/\sMLKING\s/, " Martin Luther King ")
     |> safe_replace(~r/\sML KING\s/, " Martin Luther King ")
-    |> safe_replace(~r/(.+)\(/, "\\1 (")
-    |> safe_replace(~r/\)(.+)/, ") \\1")
-    |> safe_replace(~r/\((.+)\)/, "\\1")
+    # |> safe_replace(~r/(.+)\(/, "\\1 (")
+    # |> safe_replace(~r/\)(.+)/, ") \\1")
+    # |> safe_replace(~r/\((.+)\)/, "\\1")
     |> safe_replace(~r/(?i)\sAND\s/, "&")
     |> safe_replace(~r/(?i)\sI.E.\s/, "")
     |> safe_replace(~r/(?i)\sET\sAL\s/, "")
