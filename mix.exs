@@ -1,4 +1,4 @@
-defmodule AddressUS.Mixfile do
+defmodule AddressUs.MixProject do
   use Mix.Project
 
   def project do
@@ -15,22 +15,14 @@ defmodule AddressUS.Mixfile do
     ]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type `mix help compile.app` for more information
+  # Run "mix help compile.app" to learn about applications.
   def application do
-    [applications: [:logger]]
+    [
+      extra_applications: [:logger]
+    ]
   end
 
-  # Dependencies can be hex.pm packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1"}
-  #
-  # Type `mix help deps` for more examples and options
+  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:earmark, "~> 1.2.5", only: :dev},

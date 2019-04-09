@@ -46,6 +46,9 @@ defmodule AddressUS.Parser do
       post_direction: nil, pre_direction: "S", primary_number: "2345",
       secondary_designator: nil, secondary_value: nil, suffix: "St"}}
   """
+
+  require Logger
+
   def parse_address(messy_address) when not is_binary(messy_address), do: nil
 
   def parse_address(messy_address) do
@@ -72,9 +75,10 @@ defmodule AddressUS.Parser do
   def parse_address_line(messy_address) do
     messy_address
     |> standardize_address
+    |> log_term("std addr")
     |> String.split(" ")
     |> Enum.reverse()
-    |> parse_address_list
+    |> parse_address_list()
   end
 
   @doc """
@@ -431,8 +435,8 @@ defmodule AddressUS.Parser do
 
   # Parses the pre direction field out of the address list and returns
   # {pre_direction, leftover_address_list}.
-  defp get_pre_direction(address) when not is_list(address), do: {nil, nil}
-  defp get_pre_direction([]), do: {nil, nil}
+  defp get_pre_direction(address) when not is_list(address), do: {nil, nil, nil}
+  defp get_pre_direction([]), do: {nil, nil, nil}
   defp get_pre_direction(address), do: get_pre_direction(address, nil, false)
 
   defp get_pre_direction(address, _pre_direction, false) do
@@ -454,27 +458,29 @@ defmodule AddressUS.Parser do
 
     tail_tail_head_is_keyword = is_keyword?(tail_tail_head)
 
+    log_term({single_word_direction, next_is_direction, tail}, "g_p_d_internals")
+
     cond do
       single_word_direction != "" && next_is_direction &&
           tail_tail_head_is_keyword ->
-        {single_word_direction, tail}
+        {single_word_direction, head, tail}
 
       single_word_direction != "" && next_is_direction &&
           tail_tail_head == nil ->
-        {single_word_direction, tail}
+        {single_word_direction, head, tail}
 
       single_word_direction != "" && next_is_direction &&
           !tail_tail_head_is_keyword ->
-        {double_word_direction, tail_tail}
+        {double_word_direction, head <> tail_head, tail_tail}
 
-      single_word_direction != "" && tail == [] ->
-        {nil, address}
+      # single_word_direction != "" && tail == [] ->
+      #   {nil, address}
 
       single_word_direction != "" ->
-        {single_word_direction, tail}
+        {single_word_direction, head, tail}
 
       true ->
-        {nil, address}
+        {nil, nil, address}
     end
   end
 
@@ -767,24 +773,24 @@ defmodule AddressUS.Parser do
 
   # Parses the suffix out of the address list and returns
   # {suffix, leftover_address_list}
-  defp get_suffix(address) when not is_list(address), do: {nil, nil}
-  defp get_suffix([]), do: {nil, nil}
-  defp get_suffix(address), do: get_suffix(address, nil, false)
-  defp get_suffix(address, suffix, true), do: {suffix, address}
+  defp get_suffix(address) when not is_list(address), do: {nil, nil, nil}
+  defp get_suffix([]), do: {nil, nil, nil}
+  defp get_suffix(address), do: get_suffix(address, nil, nil, false)
+  defp get_suffix(address, suffix, raw_suffix, true), do: {suffix, raw_suffix, address}
 
-  defp get_suffix(address, _, false) do
+  defp get_suffix(address, _, _, false) do
     [head | tail] = address
     new_suffix = get_suffix_value(head)
 
     cond do
       Enum.count(clean_hyphenated_street(head)) > 1 ->
-        get_suffix(address, nil, true)
+        get_suffix(address, nil, nil, true)
 
       new_suffix != nil ->
-        get_suffix(tail, new_suffix, true)
+        get_suffix(tail, new_suffix, title_case(head), true)
 
       true ->
-        get_suffix(address, nil, true)
+        get_suffix(address, nil, nil, true)
     end
   end
 
@@ -797,38 +803,90 @@ defmodule AddressUS.Parser do
   defp parse_address_list([""]), do: nil
 
   defp parse_address_list(address) do
-    cleaned_address = Enum.map(address, &safe_replace(&1, ",", ""))
-    {designator, value, pmb, address_no_secondary} = get_secondary(cleaned_address)
-    {post_direction, address_no_secondary_direction} = get_post_direction(address_no_secondary)
-    {suffix, address_no_suffix} = get_suffix(address_no_secondary_direction)
-    reversed_address_remnants = Enum.reverse(address_no_suffix)
-    {primary_number, box, p_val, p_des, address_no_number} = get_number(reversed_address_remnants)
-    {pre_direction, address_no_pre_direction} = get_pre_direction(address_no_number)
-    street_name = get_street(address_no_pre_direction)
+    cleaned_address =
+      Enum.map(address, &safe_replace(&1, ",", ""))
+      |> log_term("cleaned")
 
-    name =
-      case street_name == nil && !(box == nil) do
-        true -> box
-        false -> street_name
+    {designator, value, pmb, address_no_secondary} =
+      get_secondary(cleaned_address)
+      |> log_term("get_secondary")
+
+    {post_direction, address_no_secondary_direction} =
+      get_post_direction(address_no_secondary)
+      |> log_term("get_post_direction")
+
+    {suffix, raw_suffix, address_no_suffix} =
+      get_suffix(address_no_secondary_direction)
+      |> log_term("get_suffix")
+
+    reversed_address_remnants =
+      Enum.reverse(address_no_suffix)
+      |> log_term("reversed")
+
+    {primary_number, box, p_val, p_des, address_no_number} =
+      get_number(reversed_address_remnants)
+      |> log_term("get_number")
+
+    {pre_direction, raw_pre_direction, address_no_pre_direction} =
+      get_pre_direction(address_no_number)
+      |> log_term("get_pre_direction")
+
+    street_name =
+      get_street(address_no_pre_direction)
+      |> log_term("get_street")
+
+    # name =
+    #   case street_name == nil && !(box == nil) do
+    #     true -> box
+    #     false -> street_name
+    #   end
+
+    {final_name, pre_direction, suffix, final_secondary_val} =
+      case {street_name, box, pre_direction, suffix, p_val, p_des} do
+        {nil, b, _, _, _, _} when b != nil ->
+          {box, pre_direction, suffix, p_val}
+
+        {nil, _, _, _, pv, nil} when pv != nil ->
+          {pv, pre_direction, suffix, nil}
+
+        # It's much more likely a suffix is really the street name (when name is nil)
+        # unless the suffix is in a short list of common suffixes which should never be street names
+        {nil, _, pre, suf, _, _} when pre != nil and suf in ["St", "Dr"] ->
+          {raw_pre_direction, nil, suffix, p_val}
+
+        {nil, _, _pre, suf, _, _} when suf != nil ->
+          {raw_suffix, pre_direction, nil, p_val}
+
+        {nil, _, pre, _suf, _, _} when pre != nil ->
+          {raw_pre_direction, nil, suffix, p_val}
+
+        _ ->
+          {street_name, pre_direction, suffix, p_val}
       end
 
-    {final_name, final_secondary_val} =
-      cond do
-        name == nil ->
-          cond do
-            p_val != nil && p_des == nil -> {p_val, nil}
-            true -> {nil, p_val}
-          end
+    # IO.inspect(name, label: "name")
 
-        true ->
-          {name, p_val}
-      end
+    # {final_name, final_secondary_val} =
+    #   cond do
+    #     name == nil ->
+    #       cond do
+    #         p_val != nil && p_des == nil -> {p_val, nil}
+    #         true -> {nil, p_val}
+    #       end
+
+    #     true ->
+    #       {name, p_val}
+    #   end
+
+    log_term({final_name, final_secondary_val}, "final_name&secondary_val")
 
     final_secondary_designator =
       cond do
         designator == nil && p_des != nil -> p_des
         true -> designator
       end
+
+    log_term(final_secondary_designator, "final_secondary_designator")
 
     final_secondary_value =
       cond do
@@ -841,6 +899,8 @@ defmodule AddressUS.Parser do
             true -> value
           end
       end
+
+    log_term(final_secondary_value, "final_secondary_value")
 
     %Street{
       secondary_designator: final_secondary_designator,
@@ -1182,5 +1242,10 @@ defmodule AddressUS.Parser do
       true ->
         false
     end
+  end
+
+  defp log_term(term, label) do
+    Logger.debug(label <> ": " <> inspect(term))
+    term
   end
 end
