@@ -331,6 +331,7 @@ defmodule AddressUSConfig do
       "Floor" => "Fl",
       "Front" => "Frnt",
       "Hangar" => "Hngr",
+      "Hanger" => "Hngr",
       "Lobby" => "Lbby",
       "Lot" => "Lot",
       "Lower" => "Lowr",

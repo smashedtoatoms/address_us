@@ -1354,4 +1354,23 @@ defmodule AddressUSTest do
     assert desired_result == parse_address(addr)
     assert desired_result == String.upcase(addr) |> parse_address()
   end
+
+  test "2060 Airport Drive Hanger #39, Elkhart, IN 46514" do
+    addr = "2060 Airport Drive Hanger #39, Elkhart, IN 46514"
+
+    desired_result = %Address{
+      city: "Elkhart",
+      state: "IN",
+      postal: "46514",
+      street: %Street{
+        name: "Airport",
+        primary_number: "2060",
+        suffix: "Dr",
+        secondary_designator: "Hngr",
+        secondary_value: "39"
+      }
+    }
+
+    assert desired_result == parse_address(addr)
+  end
 end
