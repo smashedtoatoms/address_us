@@ -3,6 +3,14 @@ defmodule Address do
   Container for the struct that contains the Address information.
   """
 
+  @type t :: %__MODULE__{
+    city: String.t(),
+    plus_4: String.t(),
+    street: Street.t(),
+    state: String.t(),
+    postal: String.t()
+  }
+
   @doc """
   Struct containing Address information.
   """
@@ -13,6 +21,17 @@ defmodule Street do
   @moduledoc """
   Container for the struct that contains the Street information for an address.
   """
+
+  @type t :: %__MODULE__{
+    name: String.t(),
+    pmb: String.t(),
+    pre_direction: String.t(),
+    primary_number: String.t(),
+    post_direction: String.t(),
+    secondary_designator: String.t(),
+    secondary_value: String.t(),
+    suffix: String.t()
+  }
 
   @doc """
   Struct containing the Street information.
