@@ -842,7 +842,7 @@ defmodule AddressUS.Parser do
       |> safe_replace(~r/\)(.+)/, ") \\1")
       |> safe_replace(~r/\((.+)\)/, "\\1")
       |> safe_replace(~r/(?i)\sAND\s/, "&")
-      |> safe_replace(~r/(?i)\sI.E.\s/, "")
+      |> safe_replace(~r/(?i)\sI\.E\.\s/, "")
       |> safe_replace(~r/(?i)\sET\sAL\s/, "")
       |> safe_replace(~r/(?i)\sIN\sCARE\sOF\s/, "")
       |> safe_replace(~r/(?i)\sCARE\sOF\s/, "")

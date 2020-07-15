@@ -826,4 +826,12 @@ defmodule AddressUSTest do
     result = parse_address("1093 B St, Hayward, CA, 94541")
     assert desired_result == result
   end
+
+  test "937 Pearline Plaza, New Ike, MO, 00053" do
+    desired_result = %Address{city: "New Ike", state: "MO",
+    postal: "00053", street: %Street{name: "Pearline",
+    primary_number: "937", suffix: "Plz"}}
+    result = parse_address("937 Pearline Plaza, New Ike, MO, 00053")
+    assert desired_result == result
+  end
 end
