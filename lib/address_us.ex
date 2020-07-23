@@ -852,7 +852,7 @@ defmodule AddressUS.Parser do
       |> safe_replace(~r/ US$/, "")
       |> safe_replace(~r/US$/, "")
       |> safe_replace(~r/\(SEC\)/, "")
-      |> safe_replace(~r/U.S./, "US")
+      |> safe_replace(~r/U\.S\./, "US")
       |> safe_replace(~r/\sM L King\s/, " Martin Luther King ")
       |> safe_replace(~r/\sMLK\s/, " Martin Luther King ")
       |> safe_replace(~r/\sMLKING\s/, " Martin Luther King ")
