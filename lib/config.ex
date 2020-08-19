@@ -346,7 +346,7 @@ defmodule AddressUSConfig do
       "Suite" => "Ste",
       "Trailer" => "Trlr",
       "Unit" => "Unit",
-      "Upper" => "Uppr",
+      "Upper" => "Uppr"
     }
   end
 
