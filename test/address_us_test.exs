@@ -19,6 +19,12 @@ defmodule AddressUSTest do
     assert desired_result == result
   end
 
+  test "Parse 5 digit postal code with plus4 and no dash" do
+    desired_result = %Address{postal: "80219", plus_4: "1234"}
+    result = parse_address("802191234")
+    assert desired_result == result
+  end
+
   test "Parse 3 digit postal code and pad it with zeros" do
     desired_result = %Address{postal: "00219"}
     result = parse_address("219")

@@ -884,7 +884,8 @@ defmodule AddressUS.Parser do
         zip = dirty_zip |> safe_replace(",", "") |> String.pad_leading(5, "0")
         plus4 = dirty_plus4 |> safe_replace(",", "") |> String.pad_leading(4, "0")
         {zip, plus4}
-
+      Regex.match?(~r/^\d{9}$/, postal) ->
+        String.split_at(postal, 5)
       Regex.match?(~r/^\d?\d?\d?\d?\d$/, postal) ->
         clean_postal = postal |> String.pad_leading(5, "0") |> safe_replace(",", "")
         {clean_postal, nil}
