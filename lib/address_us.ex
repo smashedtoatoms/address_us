@@ -1202,11 +1202,12 @@ defmodule AddressUS.Parser do
     end
   end
 
-  # Determines if a string is a pair of 1-3 digit numbers separated by a hyphen
+  # Determines if a string represents a pair of numbers separated by a hyphen, where the first
+  # number has between one and three digits.
   defp string_is_hyphenated_address_number?(value) when not is_binary(value), do: false
 
   defp string_is_hyphenated_address_number?(value) do
-    regex = ~r/^\d\d?\d?-\d\d?\d?$/
+    regex = ~r/^\d\d?\d?-\d+$/
     String.match?(value, regex)
   end
 end
