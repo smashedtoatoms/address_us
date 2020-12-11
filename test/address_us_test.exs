@@ -498,6 +498,15 @@ defmodule AddressUSTest do
     assert desired_result == result
   end
 
+  test "Parse an address line that has a hyphenated address number" do
+    desired_result = %Address{
+      street: %Street{name: "Bronx", primary_number: "112-10", suffix: "Rd"}
+    }
+
+    result = parse_address("112-10 Bronx Rd")
+    assert desired_result == result
+  end
+
   test "not choke on a garbage address line" do
     desired_result = nil
     result = parse_address_line("")

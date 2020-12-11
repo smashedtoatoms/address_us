@@ -385,13 +385,16 @@ defmodule AddressUS.Parser do
       number == nil && is_state?(head) ->
         get_number(address, backup, number, box, p_val, p_des, true)
 
+      string_is_hyphenated_address_number?(head) ->
+        get_number(tail, backup, head, box, p_val, p_des, true)
+
       safe_contains?(head, "-") ->
-        [h | t] = String.split("-")
+        [h | t] = String.split(head, "-")
 
         secondary_value =
           case length(t) do
             0 -> nil
-            _ -> hd(tail)
+            _ -> hd(t)
           end
 
         get_number(tail, backup, h, box, secondary_value, "Ste", true)
@@ -1197,5 +1200,14 @@ defmodule AddressUS.Parser do
       true ->
         false
     end
+  end
+
+  # Determines if a string represents a pair of numbers separated by a hyphen, where the first
+  # number has between one and three digits.
+  defp string_is_hyphenated_address_number?(value) when not is_binary(value), do: false
+
+  defp string_is_hyphenated_address_number?(value) do
+    regex = ~r/^\d\d?\d?-\d+$/
+    String.match?(value, regex)
   end
 end
