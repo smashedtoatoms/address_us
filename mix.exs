@@ -4,7 +4,7 @@ defmodule AddressUS.Mixfile do
   def project do
     [
       app: :address_us,
-      version: "0.4.0",
+      version: "0.4.1",
       elixir: ">= 1.6.0",
       name: "AddressUS",
       source_url: "https://github.com/smashedtoatoms/address_us",
@@ -33,8 +33,8 @@ defmodule AddressUS.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:earmark, "~> 1.2.5", only: :dev},
-      {:ex_doc, "~> 0.18.4", only: :dev}
+      {:earmark, "~> 1.4", only: :dev},
+      {:ex_doc, "~> 0.23.0", only: :dev}
     ]
   end
 
