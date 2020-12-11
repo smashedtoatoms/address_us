@@ -1,52 +1,59 @@
-    <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.14.1">
-    <title>AddressUS.Parser – AddressUS v0.2.1</title>
-    <link rel="stylesheet" href="dist/app-23e810f3fe.css" />
-    
-    <script src="dist/sidebar_items.js"></script>
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="AddressUS v0.4.0">
+    <title>AddressUS.Parser — AddressUS v0.4.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+      <link rel="canonical" href="https://hexdocs.pm/address_us/AddressUS.Parser.html" />
+    <script src="dist/sidebar_items-0bcb3d6721.js"></script>
+      <script src="docs_config.js"></script>
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
   </head>
   <body data-type="modules">
-    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+<div class="main">
 
-    <div class="main">
-<button class="sidebar-toggle">
-  <i class="icon-menu"></i>
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
 </button>
+
 <section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
 
-  
-  <a href="api-reference.html" class="sidebar-projectLink">
-    <div class="sidebar-projectDetails">
-      <h1 class="sidebar-projectName">
-        AddressUS
-      </h1>
-      <h2 class="sidebar-projectVersion">
-        v0.2.1
-      </h2>
+  <div class="autocomplete">
+    <div class="autocomplete-results">
     </div>
-    
-  </a>
+  </div>
 
-  <div class="sidebar-search">
-    <i class="icon-search"></i>
-    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="https://github.com/smashedtoatoms/address_us" class="sidebar-projectName">
+AddressUS      </a>
+      <strong class="sidebar-projectVersion">
+        v0.4.0
+      </strong>
+    </div>
   </div>
 
   <ul class="sidebar-listNav">
     <li><a id="extras-list" href="#full-list">Pages</a></li>
 
-    
       <li><a id="modules-list" href="#full-list">Modules</a></li>
-    
 
-    
-
-    
   </ul>
   <div class="gradient"></div>
   <ul id="full-list" class="sidebar-fullList"></ul>
@@ -56,442 +63,331 @@
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-
       <h1>
-        <small class="visible-xs">AddressUS v0.2.1</small>
-        AddressUS.Parser
-        
-        
-          <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L25" title="View Source" class="view-source" rel="help">
-            <i class="icon-code"></i>
+        AddressUS.Parser <small class="app-vsn">(AddressUS v0.4.0)</small>
+          <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L49" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
           </a>
-        
       </h1>
 
-      
+
         <section id="moduledoc">
-          <p>Parses US Addresses.</p>
+<p>Parses US Addresses.</p>        </section>
 
-        </section>
-      
-
-      
         <section id="summary" class="details-list">
           <h1 class="section-heading">
             <a class="hover-link" href="#summary">
-              <i class="icon-link"></i>
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
             </a>
             Summary
           </h1>
-          
-
-          
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
     </h2>
-    <div class="summary-row">
+<div class="summary-row">
   <div class="summary-signature">
     <a href="#abbreviate_state/1">abbreviate_state(raw_state)</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Abbreviates the state provided.</p>
-<h2>Example</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.abbreviate_state(&quot;Wyoming&quot;)
-&quot;WY&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(&quot;wyoming&quot;)
-&quot;WY&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(&quot;Wyomin&quot;)
-&quot;Wyomin&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(nil)
-nil</code></pre>
-</div>
-  
+    <div class="summary-synopsis"><p>Abbreviates the state provided.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#clean_phone_number/1">clean_phone_number(phone)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Removes non-numeric characters from the phone number and then returns the
-integer.</p>
-<h2>Examples</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.clean_phone_number(&quot;(303) 310-7802&quot;)
-3033107802</code></pre>
-</div>
-  
+integer.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#filter_country_code/1">filter_country_code(phone)</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Removes country code and associated punctuation from the phone number.</p>
-<h2>Examples</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 303-310-7802&quot;)
-&quot;303-310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 (303) 310-7802&quot;)
-&quot;(303) 310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;+1-303-310-7802&quot;)
-&quot;303-310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;1-303-310-7802&quot;)
-&quot;303-310-7802&quot;</code></pre>
-</div>
-  
+    <div class="summary-synopsis"><p>Removes country code and associated punctuation from the phone number.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#get_country_code/1">get_country_code(country_name)</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Converts the country to the 2 digit ISO country code.  “US” is default.</p>
-<h2>Example</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.get_country_code(nil)
-&quot;US&quot;
-iex&gt; AddressUS.Parser.get_country_code(&quot;Afghanistan&quot;)
-&quot;AF&quot;
-iex&gt; AddressUS.Parser.get_country_code(&quot;AF&quot;)
-&quot;AF&quot;</code></pre>
-</div>
-  
+    <div class="summary-synopsis"><p>Converts the country to the 2 digit ISO country code.  &quot;US&quot; is default.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#parse_address/1">parse_address(messy_address)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Parses a raw address into all of its requisite parts according to USPS
-suggestions for address parsing.</p>
-<h2>Known Bugs</h2>
-<pre><code class="elixir">1) if street suffix is left off while parsing a full multi-line address,
-it will fail unless there is a comma or newline separating the street
-name from the city.</code></pre>
-<h2>Examples</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address(&quot;2345 S B Street, Denver, CO 80219&quot;)
-%Address{city: &quot;Denver&quot;, plus_4: nil, postal: &quot;80219&quot;,
-state: &quot;CO&quot;, street: %Street{name: &quot;B&quot;, pmb: nil,
-post_direction: nil, pre_direction: &quot;S&quot;, primary_number: &quot;2345&quot;,
-secondary_designator: nil, secondary_value: nil, suffix: &quot;St&quot;}}</code></pre>
-</div>
-  
+suggestions for address parsing.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#parse_address_line/1">parse_address_line(invalid)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Parses the raw street portion of an address into its requisite parts
-according to USPS suggestions for address parsing.</p>
-<h2>Examples</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address_line(&quot;2345 S. Beade St&quot;)
-%Street{name: &quot;Beade&quot;, pmb: nil, post_direction: nil, pre_direction: &quot;S&quot;,
-primary_number: &quot;2345&quot;, secondary_designator: nil, secondary_value: nil,
-suffix: &quot;St&quot;}</code></pre>
-</div>
-  
+according to USPS suggestions for address parsing.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#parse_csv/1">parse_csv(csv)</a>
   </div>
-  
     <div class="summary-synopsis"><p>Parses a csv, but instead of parsing at every comma, it only splits at the
 last one found.  This allows it to handle situations where the first value
-parsed has a comma in it that is not part of what you want to parse.</p>
-<h2>Example</h2>
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_csv(&quot;test/test.csv&quot;)
-%{&quot;Something Horrible, (The worst place other than Wyoming)&quot; =&gt; &quot;SH&quot;,
-&quot;Wyoming&quot; =&gt; &quot;WY&quot;}</code></pre>
-</div>
-  
+parsed has a comma in it that is not part of what you want to parse.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#title_case/1">title_case(value)</a>
   </div>
-  
 </div>
-
   </div>
-
-
-          
-
-          
-
         </section>
-      
 
-      
-
-      
         <section id="functions" class="details-list">
           <h1 class="section-heading">
             <a class="hover-link" href="#functions">
-              <i class="icon-link"></i>
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
             </a>
-            Functions
-          </h1>
-          <div class="detail" id="abbreviate_state/1">
+Functions          </h1>
+          <div class="functions-list">
+<section class="detail" id="abbreviate_state/1">
   <div class="detail-header">
     <a href="#abbreviate_state/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">abbreviate_state(raw_state)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L125" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">abbreviate_state(raw_state)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L154" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Abbreviates the state provided.</p>
-<h2 id="abbreviate_state/1-example" class="section-heading">
-  <a href="#abbreviate_state/1-example" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Abbreviates the state provided.</p><h2 id="abbreviate_state/1-example" class="section-heading">
+  <a href="#abbreviate_state/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Example
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.abbreviate_state(&quot;Wyoming&quot;)
-&quot;WY&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(&quot;wyoming&quot;)
-&quot;WY&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(&quot;Wyomin&quot;)
-&quot;Wyomin&quot;
-iex&gt; AddressUS.Parser.abbreviate_state(nil)
-nil</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="clean_phone_number/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">abbreviate_state</span><span class="p" data-group-id="0464969129-1">(</span><span class="s">&quot;Wyoming&quot;</span><span class="p" data-group-id="0464969129-1">)</span><span class="w">
+</span><span class="s">&quot;WY&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">abbreviate_state</span><span class="p" data-group-id="0464969129-2">(</span><span class="s">&quot;wyoming&quot;</span><span class="p" data-group-id="0464969129-2">)</span><span class="w">
+</span><span class="s">&quot;WY&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">abbreviate_state</span><span class="p" data-group-id="0464969129-3">(</span><span class="s">&quot;Wyomin&quot;</span><span class="p" data-group-id="0464969129-3">)</span><span class="w">
+</span><span class="s">&quot;Wyomin&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">abbreviate_state</span><span class="p" data-group-id="0464969129-4">(</span><span class="no">nil</span><span class="p" data-group-id="0464969129-4">)</span><span class="w">
+</span><span class="no">nil</span></code></pre>  </section>
+</section>
+<section class="detail" id="clean_phone_number/1">
   <div class="detail-header">
     <a href="#clean_phone_number/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">clean_phone_number(phone)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L81" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">clean_phone_number(phone)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L106" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Removes non-numeric characters from the phone number and then returns the
-integer.</p>
-<h2 id="clean_phone_number/1-examples" class="section-heading">
-  <a href="#clean_phone_number/1-examples" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Removes non-numeric characters from the phone number and then returns the
+integer.</p><h2 id="clean_phone_number/1-examples" class="section-heading">
+  <a href="#clean_phone_number/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Examples
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.clean_phone_number(&quot;(303) 310-7802&quot;)
-3033107802</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="filter_country_code/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">clean_phone_number</span><span class="p" data-group-id="9718524683-1">(</span><span class="s">&quot;(303) 310-7802&quot;</span><span class="p" data-group-id="9718524683-1">)</span><span class="w">
+</span><span class="mi">3033107802</span></code></pre>  </section>
+</section>
+<section class="detail" id="filter_country_code/1">
   <div class="detail-header">
     <a href="#filter_country_code/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">filter_country_code(phone)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L105" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">filter_country_code(phone)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L133" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Removes country code and associated punctuation from the phone number.</p>
-<h2 id="filter_country_code/1-examples" class="section-heading">
-  <a href="#filter_country_code/1-examples" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Removes country code and associated punctuation from the phone number.</p><h2 id="filter_country_code/1-examples" class="section-heading">
+  <a href="#filter_country_code/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Examples
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 303-310-7802&quot;)
-&quot;303-310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;+1 (303) 310-7802&quot;)
-&quot;(303) 310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;+1-303-310-7802&quot;)
-&quot;303-310-7802&quot;
-iex&gt; AddressUS.Parser.filter_country_code(&quot;1-303-310-7802&quot;)
-&quot;303-310-7802&quot;</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_country_code/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">filter_country_code</span><span class="p" data-group-id="6906989182-1">(</span><span class="s">&quot;+1 303-310-7802&quot;</span><span class="p" data-group-id="6906989182-1">)</span><span class="w">
+</span><span class="s">&quot;303-310-7802&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">filter_country_code</span><span class="p" data-group-id="6906989182-2">(</span><span class="s">&quot;+1 (303) 310-7802&quot;</span><span class="p" data-group-id="6906989182-2">)</span><span class="w">
+</span><span class="s">&quot;(303) 310-7802&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">filter_country_code</span><span class="p" data-group-id="6906989182-3">(</span><span class="s">&quot;+1-303-310-7802&quot;</span><span class="p" data-group-id="6906989182-3">)</span><span class="w">
+</span><span class="s">&quot;303-310-7802&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">filter_country_code</span><span class="p" data-group-id="6906989182-4">(</span><span class="s">&quot;1-303-310-7802&quot;</span><span class="p" data-group-id="6906989182-4">)</span><span class="w">
+</span><span class="s">&quot;303-310-7802&quot;</span></code></pre>  </section>
+</section>
+<section class="detail" id="get_country_code/1">
   <div class="detail-header">
     <a href="#get_country_code/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">get_country_code(country_name)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L150" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">get_country_code(country_name)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L183" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Converts the country to the 2 digit ISO country code.  “US” is default.</p>
-<h2 id="get_country_code/1-example" class="section-heading">
-  <a href="#get_country_code/1-example" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Converts the country to the 2 digit ISO country code.  &quot;US&quot; is default.</p><h2 id="get_country_code/1-example" class="section-heading">
+  <a href="#get_country_code/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Example
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.get_country_code(nil)
-&quot;US&quot;
-iex&gt; AddressUS.Parser.get_country_code(&quot;Afghanistan&quot;)
-&quot;AF&quot;
-iex&gt; AddressUS.Parser.get_country_code(&quot;AF&quot;)
-&quot;AF&quot;</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="parse_address/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">get_country_code</span><span class="p" data-group-id="4038596092-1">(</span><span class="no">nil</span><span class="p" data-group-id="4038596092-1">)</span><span class="w">
+</span><span class="s">&quot;US&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">get_country_code</span><span class="p" data-group-id="4038596092-2">(</span><span class="s">&quot;Afghanistan&quot;</span><span class="p" data-group-id="4038596092-2">)</span><span class="w">
+</span><span class="s">&quot;AF&quot;</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">get_country_code</span><span class="p" data-group-id="4038596092-3">(</span><span class="s">&quot;AF&quot;</span><span class="p" data-group-id="4038596092-3">)</span><span class="w">
+</span><span class="s">&quot;AF&quot;</span></code></pre>  </section>
+</section>
+<section class="detail" id="parse_address/1">
   <div class="detail-header">
     <a href="#parse_address/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">parse_address(messy_address)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L44" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">parse_address(messy_address)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L68" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Parses a raw address into all of its requisite parts according to USPS
-suggestions for address parsing.</p>
-<h2 id="parse_address/1-known-bugs" class="section-heading">
-  <a href="#parse_address/1-known-bugs" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Parses a raw address into all of its requisite parts according to USPS
+suggestions for address parsing.</p><h2 id="parse_address/1-known-bugs" class="section-heading">
+  <a href="#parse_address/1-known-bugs" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Known Bugs
 </h2>
-
-<pre><code class="elixir">1) if street suffix is left off while parsing a full multi-line address,
-it will fail unless there is a comma or newline separating the street
-name from the city.</code></pre>
-<h2 id="parse_address/1-examples" class="section-heading">
-  <a href="#parse_address/1-examples" class="hover-link"><i class="icon-link"></i></a>
+<pre><code class="nohighlight makeup elixir"><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">street</span><span class="w"> </span><span class="n">suffix</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="n">while</span><span class="w"> </span><span class="n">parsing</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">full</span><span class="w"> </span><span class="n">multi</span><span class="o">-</span><span class="n">line</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w">
+</span><span class="n">it</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">fail</span><span class="w"> </span><span class="k">unless</span><span class="w"> </span><span class="n">there</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">comma</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">newline</span><span class="w"> </span><span class="n">separating</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">street</span><span class="w">
+</span><span class="n">name</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">city</span><span class="o">.</span></code></pre><h2 id="parse_address/1-examples" class="section-heading">
+  <a href="#parse_address/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Examples
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address(&quot;2345 S B Street, Denver, CO 80219&quot;)
-%Address{city: &quot;Denver&quot;, plus_4: nil, postal: &quot;80219&quot;,
-state: &quot;CO&quot;, street: %Street{name: &quot;B&quot;, pmb: nil,
-post_direction: nil, pre_direction: &quot;S&quot;, primary_number: &quot;2345&quot;,
-secondary_designator: nil, secondary_value: nil, suffix: &quot;St&quot;}}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="parse_address_line/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">parse_address</span><span class="p" data-group-id="3755733482-1">(</span><span class="s">&quot;2345 S B Street, Denver, CO 80219&quot;</span><span class="p" data-group-id="3755733482-1">)</span><span class="w">
+</span><span class="p" data-group-id="3755733482-2">%</span><span class="nc" data-group-id="3755733482-2">Address</span><span class="p" data-group-id="3755733482-2">{</span><span class="ss">city</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Denver&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">plus_4</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">postal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80219&quot;</span><span class="p">,</span><span class="w">
+</span><span class="ss">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CO&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">street</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3755733482-3">%</span><span class="nc" data-group-id="3755733482-3">Street</span><span class="p" data-group-id="3755733482-3">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">pmb</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+</span><span class="ss">post_direction</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">pre_direction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">primary_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2345&quot;</span><span class="p">,</span><span class="w">
+</span><span class="ss">secondary_designator</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">secondary_value</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">suffix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;St&quot;</span><span class="p" data-group-id="3755733482-3">}</span><span class="p" data-group-id="3755733482-2">}</span></code></pre>  </section>
+</section>
+<section class="detail" id="parse_address_line/1">
   <div class="detail-header">
     <a href="#parse_address_line/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">parse_address_line(invalid)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L65" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">parse_address_line(invalid)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L89" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Parses the raw street portion of an address into its requisite parts
-according to USPS suggestions for address parsing.</p>
-<h2 id="parse_address_line/1-examples" class="section-heading">
-  <a href="#parse_address_line/1-examples" class="hover-link"><i class="icon-link"></i></a>
+
+<p>Parses the raw street portion of an address into its requisite parts
+according to USPS suggestions for address parsing.</p><h2 id="parse_address_line/1-examples" class="section-heading">
+  <a href="#parse_address_line/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Examples
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_address_line(&quot;2345 S. Beade St&quot;)
-%Street{name: &quot;Beade&quot;, pmb: nil, post_direction: nil, pre_direction: &quot;S&quot;,
-primary_number: &quot;2345&quot;, secondary_designator: nil, secondary_value: nil,
-suffix: &quot;St&quot;}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="parse_csv/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">parse_address_line</span><span class="p" data-group-id="0662496495-1">(</span><span class="s">&quot;2345 S. Beade St&quot;</span><span class="p" data-group-id="0662496495-1">)</span><span class="w">
+</span><span class="p" data-group-id="0662496495-2">%</span><span class="nc" data-group-id="0662496495-2">Street</span><span class="p" data-group-id="0662496495-2">{</span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Beade&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">pmb</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">post_direction</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">pre_direction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S&quot;</span><span class="p">,</span><span class="w">
+</span><span class="ss">primary_number</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2345&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">secondary_designator</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">secondary_value</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+</span><span class="ss">suffix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;St&quot;</span><span class="p" data-group-id="0662496495-2">}</span></code></pre>  </section>
+</section>
+<section class="detail" id="parse_csv/1">
   <div class="detail-header">
     <a href="#parse_csv/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">parse_csv(csv)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L169" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">parse_csv(csv)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L204" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    <p>Parses a csv, but instead of parsing at every comma, it only splits at the
+
+<p>Parses a csv, but instead of parsing at every comma, it only splits at the
 last one found.  This allows it to handle situations where the first value
-parsed has a comma in it that is not part of what you want to parse.</p>
-<h2 id="parse_csv/1-example" class="section-heading">
-  <a href="#parse_csv/1-example" class="hover-link"><i class="icon-link"></i></a>
+parsed has a comma in it that is not part of what you want to parse.</p><h2 id="parse_csv/1-example" class="section-heading">
+  <a href="#parse_csv/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Example
 </h2>
-
-<pre><code class="iex elixir">iex&gt; AddressUS.Parser.parse_csv(&quot;test/test.csv&quot;)
-%{&quot;Something Horrible, (The worst place other than Wyoming)&quot; =&gt; &quot;SH&quot;,
-&quot;Wyoming&quot; =&gt; &quot;WY&quot;}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="title_case/1">
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">AddressUS.Parser</span><span class="o">.</span><span class="n">parse_csv</span><span class="p" data-group-id="4225681302-1">(</span><span class="s">&quot;test/test.csv&quot;</span><span class="p" data-group-id="4225681302-1">)</span><span class="w">
+</span><span class="p" data-group-id="4225681302-2">%{</span><span class="s">&quot;Something Horrible, (The worst place other than Wyoming)&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;SH&quot;</span><span class="p">,</span><span class="w">
+</span><span class="s">&quot;Wyoming&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;WY&quot;</span><span class="p" data-group-id="4225681302-2">}</span></code></pre>  </section>
+</section>
+<section class="detail" id="title_case/1">
   <div class="detail-header">
     <a href="#title_case/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <span class="signature">title_case(value)</span>
-    
-      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L875" class="view-source" rel="help" title="View Source">
-       <i class="icon-code"></i>
+    <h1 class="signature">title_case(value)</h1>
+      <a href="https://github.com/smashedtoatoms/address_us/blob/master/lib/address_us.ex#L1081" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
      </a>
-    
-    
-    
   </div>
+
   <section class="docstring">
-    
+
   </section>
-</div>
-
+</section>
+          </div>
         </section>
-      
-
-      
-
-      
-          <footer class="footer">
+      <footer class="footer">
         <p>
           <span class="line">
             Built using
-            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.14.1),
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
           </span>
           <span class="line">
-            designed by
-            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
-            </span>
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
         </p>
-        <button class="night-mode-toggle" />
+        <p>
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
       </footer>
     </div>
   </div>
 </section>
 </div>
-  <script src="dist/app-5d1225399a.js"></script>
   </body>
 </html>
-
