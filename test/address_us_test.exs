@@ -1431,4 +1431,20 @@ defmodule AddressUSTest do
     result = parse_address("123 RUSSEL STREET, Anywhere, CA, 12345")
     assert desired_result == result
   end
+
+  test "147 W Rte 66, Glendora, CA 91740, USA" do
+    desired_result = %Address{
+      city: "Glendora",
+      state: "CA",
+      postal: "91740",
+      street: %Street{
+        name: "Rte 66",
+        primary_number: "147",
+        pre_direction: "W"
+      }
+    }
+
+    result = parse_address("147 W Rte 66, Glendora, CA 91740, USA")
+    assert desired_result == result
+  end
 end
