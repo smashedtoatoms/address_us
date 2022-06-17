@@ -501,6 +501,22 @@ defmodule AddressUSTest do
     assert desired_result == result
   end
 
+  test "Parse an address line that has a space between the unit symbol and the value" do
+    desired_result = %Street{
+      name: "Stanley",
+      pmb: "C",
+      post_direction: nil,
+      pre_direction: nil,
+      primary_number: "300",
+      secondary_designator: nil,
+      secondary_value: nil,
+      suffix: "St"
+    }
+
+    result = parse_address_line("300 STANLEY STREET # C")
+    assert desired_result == result
+  end
+
   test "Parse an address line that has a hyphenated address number" do
     desired_result = %Address{
       street: %Street{name: "Bronx", primary_number: "112-10", suffix: "Rd"}

@@ -907,6 +907,7 @@ defmodule AddressUS.Parser do
     |> safe_replace(~r/(?i)US (\d+)/, "US Hwy \\1")
     |> safe_replace(~r/(?i)(\d+) Hwy (\d+)/, "\\1 Highway \\2")
     |> safe_replace(~r/(.+)#/, "\\1 #")
+    |> safe_replace(~r/#\s+/, "#")
     |> safe_replace(~r/\n/, ", ")
     |> safe_replace(~r/\t/, " ")
     |> safe_replace(~r/\s+/, " ")
