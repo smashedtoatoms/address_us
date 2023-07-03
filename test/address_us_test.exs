@@ -1,6 +1,9 @@
 defmodule AddressUSTest do
   use ExUnit.Case
 
+  alias AddressUS.Address
+  alias AddressUS.Street
+
   import AddressUS.Parser,
     only: [
       parse_address: 1,
