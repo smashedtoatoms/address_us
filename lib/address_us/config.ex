@@ -1,4 +1,4 @@
-defmodule AddressUSConfig do
+defmodule AddressUS.Config do
   @moduledoc """
   Contains all of the config parameters for the address parser.
   """
