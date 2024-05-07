@@ -875,6 +875,7 @@ defmodule AddressUS.Parser do
 
   defp standardize_address(address) do
     address
+    |> String.trim_trailing()
     |> safe_replace(~r/ United States$/, "")
     |> safe_replace(~r/ UNITED STATES$/, "")
     |> safe_replace(~r/ US$/, "")
