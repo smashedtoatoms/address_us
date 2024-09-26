@@ -4,7 +4,7 @@ defmodule AddressUS.Mixfile do
   def project do
     [
       app: :address_us,
-      version: "0.4.2",
+      version: "0.4.3",
       elixir: ">= 1.6.0",
       name: "AddressUS",
       source_url: "https://github.com/smashedtoatoms/address_us",
